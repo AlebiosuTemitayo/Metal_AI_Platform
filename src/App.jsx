@@ -89,7 +89,7 @@ async function callGroqFree(messages, systemPrompt) {
       "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: "llama3-70b-8192",
+      model: "llama-3.3-70b-versatile",
       messages: formattedMessages,
       temperature: 0.2,
       max_tokens: 1200
