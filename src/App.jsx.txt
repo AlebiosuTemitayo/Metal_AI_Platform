@@ -82,7 +82,7 @@ async function callGroqFree(messages, systemPrompt) {
     ...messages
   ];
 
-  const res = await fetch("https://groq.com", {
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
