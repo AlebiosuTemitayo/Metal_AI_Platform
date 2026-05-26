@@ -98,7 +98,7 @@ async function callGroqFree(messages, systemPrompt) {
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
-  return data.choices.message.content || "";
+  return data.choices[0].message.content || "";
 }
 
 
