@@ -229,6 +229,165 @@ function Chat() {
   }
 
   return (
-    <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+        <div style={{ ...card, padding: 0, overflow: "hidden" }}>
       <div ref={listRef} style={{ height: 320, overflowY: "auto", padding: "1rem", display: "flex", flexDirection: "column", gap: 10 }}>
         {messages.map((m, i) => (
+          <div key={i} style={{ display: "flex", gap: 8, flexDirection: m.role === "user" ? "row-reverse" : "row", alignItems: "flex-start" }}>
+            <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, background: m.role === "user" ? S.bg2 : S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{m.role === "user" ? "👤" : "🔩"}</div>
+            <div style={{ maxWidth: "76%", padding: "8px 12px", borderRadius: 12, fontSize: 13, lineHeight: 1.6, background: m.role === "user" ? S.steel : S.bg2, color: m.role === "user" ? "#fff" : S.text, border: m.role === "user" ? "none" : `0.5px solid ${S.border}` }}>{m.role === "user" ? m.content : renderMarkdown(m.content)}</div>
+          </div>
+        ))}
+        {loading && (
+          <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+            <div style={{ width: 30, height: 30, borderRadius: "50%", background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>🔩</div>
+            <div style={{ padding: "10px 14px", borderRadius: 12, background: S.bg2, border: `0.5px solid ${S.border}`, display: "flex", gap: 5, alignItems: "center" }}>
+              {[0, 1, 2].map((i) => (
+                <div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: S.steel, animation: "blink 1.2s infinite", animationDelay: `${i * 0.2}s` }} />
+              ))}
+            </div>
+          </div>
+        )}
+        {error && <div style={{ fontSize: 12, color: "#c0392b", padding: "6px 10px", background: "#fdf0ef", borderRadius: S.radiusMd }}>{error}</div>}
+      </div>
+      <div style={{ display: "flex", gap: 8, padding: 10, borderTop: `0.5px solid ${S.border}` }}>
+        <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Describe your materials engineering challenge…" style={{ flex: 1, padding: "8px 12px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13, outline: "none", background: S.bg }} />
+        <button onClick={send} disabled={loading || !input.trim()} style={{ padding: "0 16px", background: loading ? S.text3 : S.steel, color: "#fff", border: "none", borderRadius: S.radiusMd, fontSize: 13, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}>Send</button>
+      </div>
+      <style>{`@keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }`}</style>
+    </div>
+  );
+}
+
+function Brief() {
+  const [form, setForm] = useState({ industry: "Oil & Gas", scope: "Material selection", component: "", temp: "", load: "", notes: "" });
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState("");
+  const [error, setError] = useState("");
+  const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
+
+  async function submit() {
+    if (!form.component.trim()) { alert("Please describe the component or application."); return; }
+    setLoading(true); setResult(""); setError("");
+    const prompt = `Engineering assessment request:
+- Industry: ${form.industry}
+- Scope: ${form.scope}
+- Component/application: ${form.component}
+- Operating temperature: ${form.temp || "not stated"}°C
+- Loading & environment: ${form.load || "not stated"}
+- Standards & constraints: ${form.notes || "none stated"}
+
+Provide a structured engineering assessment: executive summary, recommended material(s) with specific grades and specifications, key properties justifying the selection, applicable standards, fabrication and process recommendations, and risk considerations.`;
+    try {
+      const reply = await callGroqFree([{ role: "user", content: prompt }], SYSTEM);
+      setResult(reply);
+    } catch (e) {
+      setError("Assessment calculation failed.");
+    }
+    setLoading(false);
+  }
+
+  const field = (label, el) => (<div style={{ display: "flex", flexDirection: "column", gap: 5 }}><label style={{ fontSize: 12, color: S.text2 }}>{label}</label>{el}</div>);
+  const inp = (k, placeholder, type = "text") => (<input type={type} value={form[k]} onChange={(e) => set(k, e.target.value)} placeholder={placeholder} style={{ padding: "8px 10px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13 }} />);
+  const sel = (k, opts) => (<select value={form[k]} onChange={(e) => set(k, e.target.value)} style={{ padding: "8px 10px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13 }}>{opts.map((o) => <option key={o}>{o}</option>)}</select>);
+
+  return (
+    <div style={card}>
+      <div style={{ fontSize: 15, fontWeight: 600, color: S.text, marginBottom: 3 }}>Project brief</div>
+      <div style={{ fontSize: 13, color: S.text2, marginBottom: "1.25rem" }}>Submit your project details for a structured engineering assessment.</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
+        {field("Industry / sector", sel("industry", ["Aerospace", "Oil & Gas", "Automotive", "Construction", "Marine", "Power generation", "Medical devices", "Other"]))}
+        {field("Scope of assessment", sel("scope", ["Material selection", "Failure analysis", "Manufacturing process", "Corrosion assessment", "Heat treatment", "Welding & joining"]))}
+        <div style={{ gridColumn: "1/-1" }}>{field("Component / application", inp("component", "e.g. Pressure vessel in H₂S environment at 250°C"))}</div>
+        {field("Operating temperature (°C)", inp("temp", "e.g. 250"))}
+        {field("Loading & environment", inp("load", "e.g. cyclic fatigue, saline"))}
+        <div style={{ gridColumn: "1/-1" }}>{field("Standards & constraints", <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Applicable standards (ASME, API, ASTM…), weight limits, budget, existing materials…" style={{ padding: "8px 10px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13, resize: "vertical", minHeight: 70 }} />)}</div>
+      </div>
+      <button onClick={submit} disabled={loading} style={{ width: "100%", padding: 10, background: loading ? S.text3 : S.steel, color: "#fff", border: "none", borderRadius: S.radiusMd, fontSize: 14, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}>{loading ? "Generating assessment…" : "Generate engineering assessment"}</button>
+      {error && <div style={{ marginTop: 10, fontSize: 13, color: "#c0392b", padding: "8px 12px", background: "#fdf0ef", borderRadius: S.radiusMd }}>{error}</div>}
+      {result && (<div style={{ marginTop: 14, background: S.bg2, border: `0.5px solid ${S.border2}`, borderRadius: S.radius, padding: "1rem 1.25rem" }}><div style={{ fontSize: 11, fontWeight: 600, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Engineering assessment</div><div style={{ fontSize: 13, color: S.text, lineHeight: 1.7 }}>{renderMarkdown(result)}</div></div>)}
+    </div>
+  );
+}
+
+function EngineerPanel({ plan }) {
+  const [selected, setSelected] = useState(null);
+  const [confirmed, setConfirmed] = useState(false);
+
+  if (plan !== "max") return (
+    <div style={{ ...card, textAlign: "center", padding: "2rem" }}>
+      <div style={{ fontSize: 36, marginBottom: 10 }}>🔒</div>
+      <div style={{ fontSize: 16, fontWeight: 600, color: S.text, marginBottom: 6 }}>Available on Max plan</div>
+      <div style={{ fontSize: 13, color: S.text2, lineHeight: 1.6, marginBottom: "1.25rem", maxWidth: 360, margin: "0 auto 1.25rem" }}>Book a live one-on-one session with a certified metallurgical engineer. Get an in-depth review of your project, failure investigation support, or a professional second opinion.</div>
+    </div>
+  );
+
+  return (
+    <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+      <div style={{ background: S.steel, padding: "1rem 1.25rem", display: "flex", alignItems: "center", gap: 14 }}>
+        <div style={{ width: 50, height: 50, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>👨‍🔬</div>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>Dr. Adewale Okafor, FIMMM</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>PhD Materials Science · 22 yrs experience · CEng</div>
+        </div>
+        <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#4caf50", flexShrink: 0 }} />
+      </div>
+      <div style={{ padding: "1.25rem" }}>
+        <div style={{ fontSize: 13, color: S.text2, lineHeight: 1.6, marginBottom: "1.25rem" }}>Specialist in high-temperature alloys, corrosion engineering, and failure analysis. Previously with Shell Global Solutions and TWI. Available for project reviews, expert witness work, and technical due diligence.</div>
+        <div style={{ fontSize: 12, fontWeight: 600, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Available slots this week</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginBottom: "1rem" }}>
+          {SLOTS.map((s, i) => (
+            <div key={i} onClick={() => { setSelected(i); setConfirmed(false); }} style={{ border: `0.5px solid ${selected === i ? S.goldMid : S.border2}`, background: selected === i ? S.goldLight : S.bg, borderRadius: S.radiusMd, padding: 10, textAlign: "center", cursor: "pointer" }}>
+              <div style={{ fontSize: 11, color: S.text2, marginBottom: 2 }}>{s.day}</div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: S.text }}>{s.time}</div>
+            </div>
+          ))}
+        </div>
+        <button onClick={() => { if (selected === null) { alert("Please select a time slot."); return; } setConfirmed(true); }} style={{ width: "100%", padding: 10, background: S.goldMid, color: "#fff", border: "none", borderRadius: S.radiusMd, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>Confirm booking</button>
+        {confirmed && (<div style={{ marginTop: 10, background: S.goldLight, border: `0.5px solid #e8d5a3`, borderRadius: S.radiusMd, padding: "10px 14px", fontSize: 13, color: S.text, textAlign: "center" }}>🎉 Session reserved for <strong>{SLOTS[selected].day} at {SLOTS[selected].time}</strong>. An email invitation has been generated.</div>)}
+      </div>
+    </div>
+  );
+}
+
+function Dashboard({ plan, onBack }) {
+  const [tab, setTab] = useState("consult");
+  const planInfo = PLANS.find((p) => p.id === plan);
+  const tierColors = { free: { bg: "#f0f0f0", color: "#888" }, pro: { bg: "#e8f4fd", color: "#1a6fa0" }, max: { bg: S.goldLight, color: S.gold } };
+  const tc = tierColors[plan];
+
+  return (
+    <div style={{ fontFamily: "system-ui, sans-serif", padding: "1rem 0", maxWidth: 700, margin: "0 auto" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: "1rem", borderBottom: `0.5px solid ${S.border}`, marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 34, height: 34, borderRadius: 9, background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🔩</div>
+          <div>
+            <span style={{ fontSize: 16, fontWeight: 600, color: S.text }}>Metal</span>
+            <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 999, background: tc.bg, color: tc.color }}>{planInfo.name}</span>
+          </div>
+        </div>
+        <div onClick={onBack} style={{ display: "flex", alignItems: "center", gap: 7, background: S.bg2, border: `0.5px solid ${S.border}`, borderRadius: 999, padding: "4px 12px 4px 4px", cursor: "pointer", fontSize: 13, color: S.text }}>
+          <div style={{ width: 26, height: 26, borderRadius: "50%", background: "#e8ebed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 600, color: S.steel }}>EN</div>
+          Sign out
+        </div>
+      </div>
+      <div style={{ display: "flex", gap: 8, marginBottom: "1.25rem" }}>
+        {[
+          { id: "consult", label: "Consultation" },
+          { id: "brief", label: "Project brief" },
+          { id: "eng", label: "Book engineer", locked: plan !== "max" },
+        ].map((t) => (
+          <button key={t.id} onClick={() => setTab(t.id)} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "🔒 "}{t.label}</button>
+        ))}
+      </div>
+      <div style={{ display: tab === "consult" ? "block" : "none" }}><Chat /></div>
+      <div style={{ display: tab === "brief" ? "block" : "none" }}><Brief /></div>
+      <div style={{ display: tab === "eng" ? "block" : "none" }}><EngineerPanel plan={plan} /></div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [plan, setPlan] = useState(null);
+  if (!plan) return <Landing onSelect={setPlan} />;
+  return <Dashboard plan={plan} onBack={() => setPlan(null)} />;
+}
