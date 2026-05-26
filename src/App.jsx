@@ -70,11 +70,11 @@ function renderMarkdown(text) {
 
 // ── 100% FREE GROQ API ENGINE ──────────────────────────────
 async function callGroqFree(messages, systemPrompt) {
-  // Reads the hidden api key from Vercel's environment setup
-  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+  // Checks Vercel environment variables OR local browser session memory
+  const apiKey = import.meta.env.VITE_GROQ_API_KEY || localStorage.getItem("LOCAL_GROQ_KEY");
 
   if (!apiKey) {
-    throw new Error("API Key setup missing. Please read instructions.");
+    throw new Error("API Key setup missing.");
   }
 
   const formattedMessages = [
@@ -82,14 +82,14 @@ async function callGroqFree(messages, systemPrompt) {
     ...messages
   ];
 
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+  const res = await fetch("https://groq.com", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${apiKey}`
     },
     body: JSON.stringify({
-      model: "llama3-70b-8192", // High-tier free open-source reasoning engine
+      model: "llama3-70b-8192",
       messages: formattedMessages,
       temperature: 0.2,
       max_tokens: 1200
@@ -100,6 +100,7 @@ async function callGroqFree(messages, systemPrompt) {
   const data = await res.json();
   return data.choices[0].message.content || "";
 }
+
 
 // ── Styles ──────────────────────────────────────────────
 const S = {
@@ -351,12 +352,28 @@ function EngineerPanel({ plan }) {
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
+  const [tempKey, setTempKey] = useState("");
   const planInfo = PLANS.find((p) => p.id === plan);
-  const tierColors = { free: { bg: "#f0f0f0", color: "#888" }, pro: { bg: "#e8f4fd", color: "#1a6fa0" }, max: { bg: S.goldLight, color: S.gold } };
-  const tc = tierColors[plan];
+  const tc = { free: { bg: "#f0f0f0", color: "#888" }, pro: { bg: "#e8f4fd", color: "#1a6fa0" }, max: { bg: S.goldLight, color: S.gold } }[plan];
+
+  const saveLocalKey = () => {
+    if(!tempKey.trim().startsWith("gsk_")) { alert("Please enter a valid Groq key starting with gsk_"); return; }
+    localStorage.setItem("LOCAL_GROQ_KEY", tempKey.trim());
+    alert("API Configuration Saved! Refreshing window...");
+    window.location.reload();
+  };
 
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: "1rem 0", maxWidth: 700, margin: "0 auto" }}>
+      {/* 🛠️ SECURE CLIENT CONFIGURATION MODAL BAR */}
+      {!localStorage.getItem("LOCAL_GROQ_KEY") && (
+        <div style={{ background: S.goldLight, border: `1px solid ${S.goldMid}`, borderRadius: S.radiusMd, padding: 12, marginBottom: 15, display: "flex", gap: 10, alignItems: "center" }}>
+          <span style={{ fontSize: 12, color: S.text, fontWeight: 500 }}>🔑 Input Groq Key to Activate AI Core:</span>
+          <input type="password" value={tempKey} onChange={(e) => setTempKey(e.target.value)} placeholder="gsk_..." style={{ flex: 1, padding: "5px 10px", fontSize: 12, borderRadius: 4, border: `1px solid ${S.border2}` }} />
+          <button onClick={saveLocalKey} style={{ background: S.steel, color: "#fff", border: "none", padding: "5px 12px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Save Key</button>
+        </div>
+      )}
+
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: "1rem", borderBottom: `0.5px solid ${S.border}`, marginBottom: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 34, height: 34, borderRadius: 9, background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🔩</div>
