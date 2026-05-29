@@ -349,6 +349,106 @@ function EngineerPanel({ plan }) {
     </div>
   );
 }
+// 🧪 DYNAMIC METALLURGICAL PHASE CALCULATOR & VISUALIZER
+function PhaseAnalyzerWidget() {
+  const [carbon, setCarbon] = useState(0.4); // wt% Carbon input variable
+  const [temp, setTemp] = useState(700);      // Temperature Celsius input variable
+
+  // Core Lever Rule Mathematics 
+  let phaseCompositionText = "";
+  let alphaFraction = 0;
+  let fe3cFraction = 0;
+  let austeniteFraction = 0;
+
+  if (temp <= 727) {
+    // Room Temp to Eutectoid Transformation Zone
+    const alphaLimit = 0.022;
+    const fe3cLimit = 6.67;
+    const boundedCarbon = Math.max(alphaLimit, Math.min(fe3cLimit, carbon));
+    
+    alphaFraction = ((fe3cLimit - boundedCarbon) / (fe3cLimit - alphaLimit)) * 100;
+    fe3cFraction = ((boundedCarbon - alphaLimit) / (fe3cLimit - alphaLimit)) * 100;
+    
+    phaseCompositionText = boundedCarbon < 0.76 
+      ? `Hypoeutectoid Steel: Proeutectoid Ferrite (α) + Pearlite matrix`
+      : `Hypereutectoid Steel: Primary Cementite (Fe3C) network + Pearlite grains`;
+  } else if (temp > 727 && temp <= 1148) {
+    // Austenite Stable Temperature Window
+    const alphaLimitAt727 = 0.022;
+    const austeniteMaxLimit = 2.14;
+    const boundedCarbon = Math.max(alphaLimitAt727, Math.min(austeniteMaxLimit, carbon));
+    
+    if (boundedCarbon <= 0.76) {
+      austeniteFraction = 100;
+      phaseCompositionText = "Fully Austenitized Field (γ-Iron structural matrix)";
+    } else {
+      austeniteFraction = ((6.67 - boundedCarbon) / (6.67 - 0.76)) * 100;
+      fe3cFraction = ((boundedCarbon - 0.76) / (6.67 - 0.76)) * 100;
+      phaseCompositionText = "Austenite (γ) grains undergoing active Cementite precipitation";
+    }
+  } else {
+    phaseCompositionText = "High-Temperature Liquid/Delta Phase Region. Above standard heat-treatment fields.";
+  }
+
+  return (
+    <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.15)", borderRadius: 12, padding: "1.25rem", margin: "1rem 0" }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: "#1e2d3d", marginBottom: 3 }}>🎛️ Real-Time Equilibrium Phase Visualizer</div>
+      <div style={{ fontSize: 12, color: "#6b6b6b", marginBottom: "1rem" }}>Adjust parameters to dynamically calculate the Lever Rule phase fractions.</div>
+      
+      {/* Dynamic Sliders */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
+            <span>Carbon Composition: <strong>{carbon}% C</strong></span>
+            <span style={{ color: "#aaaaaa" }}>Max Steel Cap: 2.14%</span>
+          </div>
+          <input type="range" min="0.03" max="2.0" step="0.01" value={carbon} onChange={(e) => setCarbon(parseFloat(e.target.value))} style={{ width: "100%", accentColor: "#1e2d3d" }} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
+            <span>Target Temperature: <strong>{temp}°C</strong></span>
+            <span style={{ color: temp > 727 ? "#b8860b" : "#4caf50" }}>{temp > 727 ? "Above A1 Line" : "Below A1 Line"}</span>
+          </div>
+          <input type="range" min="400" max="1100" step="10" value={temp} onChange={(e) => setTemp(parseInt(e.target.value))} style={{ width: "100%", accentColor: "#b8860b" }} />
+        </div>
+      </div>
+
+      {/* Real-time Dynamic Graph Bars */}
+      <div style={{ background: "#f7f7f5", borderRadius: 8, padding: 12, display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, color: "#6b6b6b", textTransform: "uppercase" }}>Calculated Structural Metrics</div>
+        
+        {temp <= 727 ? (
+          <>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Ferrite (α-Iron) Fraction</span><strong>{alphaFraction.toFixed(1)}%</strong></div>
+              <div style={{ height: 8, background: "rgba(0,0,0,0.06)", borderRadius: 999, overflow: "hidden" }}><div style={{ width: `${alphaFraction}%`, height: "100%", background: "#1e2d3d" }} /></div>
+            </div>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Fe₃C Carbide) Fraction</span><strong>{fe3cFraction.toFixed(1)}%</strong></div>
+              <div style={{ height: 8, background: "rgba(0,0,0,0.06)", borderRadius: 999, overflow: "hidden" }}><div style={{ width: `${fe3cFraction}%`, height: "100%", background: "#d4a017" }} /></div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Austenite (γ-Phase) Fraction</span><strong>{austeniteFraction.toFixed(1)}%</strong></div>
+              <div style={{ height: 8, background: "rgba(0,0,0,0.06)", borderRadius: 999, overflow: "hidden" }}><div style={{ width: `${austeniteFraction}%`, height: "100%", background: "#b8860b" }} /></div>
+            </div>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Precipitated Cementite (Fe₃C)</span><strong>{fe3cFraction.toFixed(1)}%</strong></div>
+              <div style={{ height: 8, background: "rgba(0,0,0,0.06)", borderRadius: 999, overflow: "hidden" }}><div style={{ width: `${fe3cFraction}%`, height: "100%", background: "#6b6b6b" }} /></div>
+            </div>
+          </>
+        )}
+      </div>
+
+      <div style={{ fontSize: 12, fontStyle: "italic", color: "#1e2d3d", textAlign: "center", borderTop: "0.5px solid rgba(0,0,0,0.08)", paddingTop: 8 }}>
+        💡 {phaseCompositionText}
+      </div>
+    </div>
+  );
+}
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
@@ -396,7 +496,11 @@ function Dashboard({ plan, onBack }) {
           <button key={t.id} onClick={() => setTab(t.id)} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "🔒 "}{t.label}</button>
         ))}
       </div>
-      <div style={{ display: tab === "consult" ? "block" : "none" }}><Chat /></div>
+      <div style={{ display: tab === "consult" ? "block" : "none" }}>
+  <Chat />
+  <PhaseAnalyzerWidget />
+</div>
+
       <div style={{ display: tab === "brief" ? "block" : "none" }}><Brief /></div>
       <div style={{ display: tab === "eng" ? "block" : "none" }}><EngineerPanel plan={plan} /></div>
     </div>
