@@ -858,6 +858,105 @@ function PourbaixCalculations() {
     </div>
   );
 }
+// 🎛️ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 3 (JOMINY PROFILE)
+function JominyCalculations() {
+  const [alloy, setAlloy] = useState("4140");
+  
+  // Standard laboratory test point entries (Rockwell HRC)
+  const [j1, setJ1] = useState(55);  // 1/16"
+  const [j4, setJ4] = useState(52);  // 4/16"
+  const [j8, setJ8] = useState(45);  // 8/16"
+  const [j16, setJ16] = useState(35); // 16/16"
+
+  // Theoretical standard reference ranges for validation checks
+  const maxPotentialHRC = alloy === "4140" ? 60 : 55;
+  const expectedTailHRC = alloy === "4140" ? 30 : 15;
+
+  // Structural Engineering Calculations
+  const hardnessDrop = Math.max(0, j1 - j16);
+  
+  // High-hardenability alloys maintain their hardness deep into the bar (Lower Slope drop-off coefficient)
+  const structuralAssessment = hardnessDrop < 15 
+    ? "High Deep-Hardening Profile: Excellent alloy response. Suitable for heavy industrial transmission gears and deep-hardened shafts."
+    : "Shallow Hardening Profile: Rapid cooling required. Hardness drops severely away from tip. Restricted to thin-walled structural sheets.";
+
+  return (
+    <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Jominy End-Quench Hardenability Profile Ledger</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1.25rem" }}>Input Rockwell C (HRC) laboratory measurements to profile cross-sectional depth-of-hardening slopes.</div>
+
+      {/* Chemistry Selection Option Panel */}
+      <div style={{ marginBottom: "1.25rem", display: "flex", flexDirection: "column", gap: 4 }}>
+        <label style={{ fontSize: 11, fontWeight: 700, color: S.steel, textTransform: "uppercase" }}>Batch Steel Composition</label>
+        <select value={alloy} onChange={(e) => {
+          setAlloy(e.target.value);
+          if (e.target.value === "1045") { setJ1(50); setJ4(35); setJ8(22); setJ16(15); }
+          else { setJ1(55); setJ4(52); setJ8(45); setJ16(35); }
+        }} style={{ padding: "8px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: S.bg2, fontWeight: 600, color: S.text }}>
+          <option value="4140">AISI 4140 Chromoly Steel (High Depth Capability)</option>
+          <option value="1045">AISI 1045 Plain Carbon Steel (Shallow Depth Capability)</option>
+        </select>
+      </div>
+
+      {/* Manual Data Entry Matrix Grid Checkpoints */}
+      <div style={{ fontSize: 11, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Laboratory Specimen Checkpoint Entries</div>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10, marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: S.text2 }}>J1 (1/16")</label>
+          <input type="number" min="5" max="70" value={j1} onChange={(e) => setJ1(parseInt(e.target.value) || 0)} style={{ padding: "6px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff", textAlign: "center", fontWeight: 700 }} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: S.text2 }}>J4 (4/16")</label>
+          <input type="number" min="5" max="70" value={j4} onChange={(e) => setJ4(parseInt(e.target.value) || 0)} style={{ padding: "6px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff", textAlign: "center", fontWeight: 700 }} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: S.text2 }}>J8 (8/16")</label>
+          <input type="number" min="5" max="70" value={j8} onChange={(e) => setJ8(parseInt(e.target.value) || 0)} style={{ padding: "6px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff", textAlign: "center", fontWeight: 700 }} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: S.text2 }}>J16 (16/16")</label>
+          <input type="number" min="5" max="70" value={j16} onChange={(e) => setJ16(parseInt(e.target.value) || 0)} style={{ padding: "6px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff", textAlign: "center", fontWeight: 700 }} />
+        </div>
+      </div>
+
+      {/* Dynamic Hardenability Plot Representation Bars */}
+      <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Cross-Sectional Hardness Curve Drop-offs</div>
+        
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}><span>Tip Boundary Hardness (J1)</span><strong>{j1} HRC</strong></div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${(j1 / 70) * 100}%`, height: "100%", background: "#b23b3b" }} /></div>
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}><span>Intermediate Core (J4)</span><strong>{j4} HRC</strong></div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${(j4 / 70) * 100}%`, height: "100%", background: S.steel }} /></div>
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}><span>Deep Core Checkpoint (J8)</span><strong>{j8} HRC</strong></div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${(j8 / 70) * 100}%`, height: "100%", background: S.steel }} /></div>
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}><span>Air Cooled Tail End (J16)</span><strong>{j16} HRC</strong></div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${(j16 / 70) * 100}%`, height: "100%", background: S.goldMid }} /></div>
+        </div>
+      </div>
+
+      {/* Metallurgical Integrity Warning Checks */}
+      {(j1 > maxPotentialHRC || j16 < expectedTailHRC) && (
+        <div style={{ background: "rgba(178,59,59,0.08)", border: "0.5px solid #b23b3b", color: "#b23b3b", padding: 8, borderRadius: 6, fontSize: 11, marginBottom: 10, fontWeight: 500 }}>
+          ⚠️ <strong>Anomalous Lab Reading Detected:</strong> Data trends violate typical carbon martensitic transformation constraints for standard {alloy} chemistry bounds. Please verify physical indent dimensions.
+        </div>
+      )}
+
+      <div style={{ fontSize: 12, fontStyle: "italic", color: S.steel, borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4 }}>
+        🔬 <strong>Depth Hardenability Assessment:</strong> {structuralAssessment}
+      </div>
+    </div>
+  );
+}
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
@@ -986,12 +1085,9 @@ function Dashboard({ plan, onBack }) {
                             {/* ✅ MOUNT DYNAMIC INTERACTIVE POURBAIX STABILITY CALCULATOR */}
               {selectedGraph === "pourbaix" && <PourbaixCalculations />}
 
-              {selectedGraph === "jominy" && (
-                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Jominy End-Quench Hardenability Workspace</div>
-                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Depth-of-Hardening ledger. Coming soon: Rockwell HRC manual entry coordinate matrices.</div>
-                </div>
-              )}
+                            {/* ✅ MOUNT DYNAMIC INTERACTIVE JOMINY HARDENABILITY PROFILE PROFILE LEDGER */}
+              {selectedGraph === "jominy" && <JominyCalculations />}
+
             </div>
           )}
 
