@@ -430,6 +430,33 @@ function Dashboard({ plan, onBack }) {
               </div>
               </div>
                )}
+                    {/* VIEW LEVEL 2: COLLECTION PAGES LISTING THE GRAPH NAMES UNDER SELECTED CATEGORY */}
+          {labCategory && !selectedGraph && (
+            <div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+                <button onClick={() => setLabCategory(null)} style={{ background: "none", border: "none", color: S.goldMid, fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>← Back to Lab Suite</button>
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 10 }}>
+                {labCategory === "constant" ? "🛑 Category 1: Fixed Reference Maps Collection" : "🎛️ Category 2: Dynamic Lab Data Calculators Collection"}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {labCategory === "constant" ? (
+                  <>
+                    <button onClick={() => setSelectedGraph("iron-carbon")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• The Iron-Carbon Phase Diagram</button>
+                    <button onClick={() => setSelectedGraph("ellingham")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• Ellingham Oxidation Stability Diagrams</button>
+                    <button onClick={() => setSelectedGraph("ttt-cct")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• TTT / CCT Transformation Curves</button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => setSelectedGraph("stress-strain")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• 1. Engineering Stress-Strain Curves (Tensile Testing)</button>
+                    <button onClick={() => setSelectedGraph("pourbaix")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• 2. Pourbaix (Potential-pH) Corrosion Diagrams</button>
+                    <button onClick={() => setSelectedGraph("jominy")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• 3. Jominy Hardenability Curves</button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
         </div>
       )}
     </div>
