@@ -463,12 +463,107 @@ function Dashboard({ plan, onBack }) {
                 <button onClick={() => setSelectedGraph(null)} style={{ background: "none", border: "none", color: S.goldMid, fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>← Back to Collection</button>
               </div>
 
-              {selectedGraph === "iron-carbon" && (
-                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Iron-Carbon Phase Diagram Workspace</div>
-                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Iron-Carbon structural lookup map. Coming soon: Dynamic Phase Lever Rule solvers.</div>
+                            {selectedGraph === "iron-carbon" && (
+                <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem" }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Equilibrium Phase Calculator (Lever Rule)</div>
+                  <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Adjust parameters to dynamically track microstructural component weight fractions.</div>
+
+                  {/* Internal state controls nested for this sub-view */}
+                  {(() => {
+                    // We use local state variables dynamically linked to global window objects for persistence
+                    if (window.localCarbon === undefined) window.localCarbon = 0.4;
+                    if (window.localTemp === undefined) window.localTemp = 700;
+                    
+                    const [c, setC] = useState(window.localCarbon);
+                    const [t, setT] = useState(window.localTemp);
+
+                    const handleC = (val) => { window.localCarbon = val; setC(val); };
+                    const handleT = (val) => { window.localTemp = val; setT(val); };
+
+                    // Lever Rule Math Formulas
+                    let phaseText = "";
+                    let alpha = 0;
+                    let fe3c = 0;
+                    let gamma = 0;
+
+                    if (t <= 727) {
+                      const aLim = 0.022;
+                      const cLim = 6.67;
+                      const boundedC = Math.max(aLim, Math.min(cLim, c));
+                      alpha = ((cLim - boundedC) / (cLim - aLim)) * 100;
+                      fe3c = ((boundedC - aLim) / (cLim - aLim)) * 100;
+                      phaseText = boundedC < 0.76 
+                        ? `Hypoeutectoid Steel: Proeutectoid Ferrite (α) + Pearlite Grains` 
+                        : `Hypereutectoid Steel: Primary Cementite (Fe₃C) Networks + Pearlite`;
+                    } else {
+                      if (c <= 0.76) {
+                        gamma = 100;
+                        phaseText = "Fully Austenitized Solid Field (γ-Iron Structural Lattice)";
+                      } else {
+                        gamma = ((6.67 - c) / (6.67 - 0.76)) * 100;
+                        fe3c = ((c - 0.76) / (6.67 - 0.76)) * 100;
+                        phaseText = "Austenite Matrix (γ) with secondary Cementite precipitation";
+                      }
+                    }
+
+                    return (
+                      <>
+                        {/* Sliders panel layout */}
+                        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: "1.25rem" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
+                              <span>Carbon Composition: <strong>{c}% C</strong></span>
+                              <span style={{ color: S.text3 }}>Max steel constraint: 2.0%</span>
+                            </div>
+                            <input type="range" min="0.03" max="2.0" step="0.01" value={c} onChange={(e) => handleC(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
+                          </div>
+
+                          <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
+                              <span>Target Temperature: <strong>{t}°C</strong></span>
+                              <span style={{ color: t > 727 ? S.gold : "#4caf50", fontSize: 11 }}>{t > 727 ? "Above A1 Eutectoid Line" : "Below A1 Eutectoid Line"}</span>
+                            </div>
+                            <input type="range" min="400" max="1000" step="10" value={t} onChange={(e) => handleT(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.goldMid }} />
+                          </div>
+                        </div>
+
+                        {/* Real-time Graph Display Bars */}
+                        <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Structural Volumes</div>
+                          {t <= 727 ? (
+                            <>
+                              <div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Ferrite (α-Iron Phase)</span><strong>{alpha.toFixed(1)}%</strong></div>
+                                <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${alpha}%`, height: "100%", background: S.steel }} /></div>
+                              </div>
+                              <div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Fe₃C Carbide)</span><strong>{fe3c.toFixed(1)}%</strong></div>
+                                <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${fe3c}%`, height: "100%", background: S.goldMid }} /></div>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Austenite (γ-Phase Matrix)</span><strong>{gamma.toFixed(1)}%</strong></div>
+                                <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${gamma}%`, height: "100%", background: S.gold }} /></div>
+                              </div>
+                              <div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Boundary Cementite (Fe₃C)</span><strong>{fe3c.toFixed(1)}%</strong></div>
+                                <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${fe3c}%`, height: "100%", background: S.text2 }} /></div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        <div style={{ fontSize: 12, fontStyle: "italic", color: S.steel, textAlign: "center", borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4 }}>
+                          💡 Matrix State: <strong>{phaseText}</strong>
+                        </div>
+                      </>
+                    );
+                  })()}
                 </div>
               )}
+
               {selectedGraph === "ellingham" && (
                 <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Ellingham Oxidation Stability Workspace</div>
