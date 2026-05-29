@@ -721,6 +721,143 @@ function StressStrainCalculations() {
     </div>
   );
 }
+// 🎛️ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 2 (POURBAIX CALCULATOR)
+function PourbaixCalculations() {
+  const [metal, setMetal] = useState("Fe");
+  const [ph, setPh] = useState(7.0); // 0 to 14
+  const [potential, setPotential] = useState(0.0); // Eh (Volts)
+
+  // Electrochemical Matrix Logic (Nernst-based Phase Approximations)
+  let stabilityState = "";
+  let chemicalSpecies = "";
+  let statusColor = "";
+  let badgeEmoji = "";
+
+  if (metal === "Fe") {
+    // Iron Pourbaix Phase Bounds
+    if (potential < -0.6 - (0.059 * ph)) {
+      stabilityState = "Immunity (👑 Safe)";
+      chemicalSpecies = "Pure Elemental Iron (Fe⁰ solid matrix)";
+      statusColor = "#27ae60"; // Green
+      badgeEmoji = "👑";
+    } else if (ph < 4.0 || (ph >= 4.0 && ph < 9.0 && potential > 0.77)) {
+      stabilityState = "Active Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Soluble Aqueous Ions (Fe²⁺ / Fe³⁺ dissolution)";
+      statusColor = "#c0392b"; // Red
+      badgeEmoji = "⚠️";
+    } else if (ph >= 4.0 && ph <= 12.0 && potential >= -0.6 && potential <= 0.77) {
+      stabilityState = "Passivation (🛡️ Protected Oxide)";
+      chemicalSpecies = "Adherent Protective Film (Fe₂O₃ / Fe₃O₄ Magnetite)";
+      statusColor = "#2980b9"; // Blue
+      badgeEmoji = "🛡️";
+    } else {
+      stabilityState = "Alkaline Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Soluble Ferrate Complex Ions (HFeO₂⁻ / FeO₄²⁻)";
+      statusColor = "#e67e22"; // Orange
+      badgeEmoji = "⚠️";
+    }
+  } else if (metal === "Cu") {
+    // Copper Pourbaix Phase Bounds
+    if (potential < 0.34 - (0.059 * ph)) {
+      stabilityState = "Immunity (👑 Safe)";
+      chemicalSpecies = "Pure Elemental Copper (Cu⁰ solid matrix)";
+      statusColor = "#27ae60";
+      badgeEmoji = "👑";
+    } else if (ph < 6.0 || ph > 13.0) {
+      stabilityState = "Active Acidic/Alkaline Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Soluble Copper Gilded Salts (Cu²⁺ / CuO₂²⁻)";
+      statusColor = "#c0392b";
+      badgeEmoji = "⚠️";
+    } else {
+      stabilityState = "Passivation (🛡️ Protected Oxide)";
+      chemicalSpecies = "Cupric/Cuprous Passive Mineral Scale (Cu₂O / CuO)";
+      statusColor = "#2980b9";
+      badgeEmoji = "🛡️";
+    }
+  } else {
+    // Zinc Pourbaix Phase Bounds
+    if (potential < -0.76) {
+      stabilityState = "Immunity (👑 Safe)";
+      chemicalSpecies = "Pure Solid Zinc Coating (Zn⁰ sacrificial crystal)";
+      statusColor = "#27ae60";
+      badgeEmoji = "👑";
+    } else if (ph >= 8.5 && ph <= 11.5) {
+      stabilityState = "Passivation (🛡️ Protected Zinc Scale)";
+      chemicalSpecies = "Zinc Hydroxide Passive Crust (Zn(OH)₂ solid)";
+      statusColor = "#2980b9";
+      badgeEmoji = "🛡️";
+    } else {
+      stabilityState = "Rapid Galvanic Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Highly Soluble Zincates (Zn²⁺ / ZnO₂²⁻ weeping matrix)";
+      statusColor = "#c0392b";
+      badgeEmoji = "⚠️";
+    }
+  }
+
+  return (
+    <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Pourbaix Electrochemical Stability Engine</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Simulate pH solutions and electrical voltage potentials to calculate structural corrosion maps.</div>
+
+      {/* Control Input Matrix Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Target Mechanical Alloy</label>
+          <select value={metal} onChange={(e) => setMetal(e.target.value)} style={{ padding: "6px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff", fontWeight: 500 }}>
+            <option value="Fe">Structural Iron / Carbon Steel</option>
+            <option value="Cu">Industrial Copper Piping</option>
+            <option value="Zn">Galvanized Sacrificial Zinc</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontWeight: 600 }}>
+            <span>Environmental Acidity: <strong>pH {ph.toFixed(1)}</strong></span>
+          </div>
+          <input type="range" min="0" max="14" step="0.1" value={ph} onChange={(e) => setPh(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4, gridColumn: "1 / -1" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, fontWeight: 600 }}>
+            <span>Electrochemical Voltage Potential (E_h vs SHE): <strong>{potential > 0 ? `+${potential.toFixed(2)}` : potential.toFixed(2)} V</strong></span>
+            <span style={{ color: potential > 1.23 || potential < 0.0 ? "#b23b3b" : "#27ae60", fontSize: 10 }}>
+              {potential > 1.23 ? "Oxygen Evolution Zone" : potential < 0.0 ? "Hydrogen Evolution Zone" : "Water Stable Window"}
+            </span>
+          </div>
+          <input type="range" min="-1.5" max="1.5" step="0.05" value={potential} onChange={(e) => setPotential(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.goldMid }} />
+        </div>
+      </div>
+
+      {/* Real-time Aqueous Stability Assessment Report */}
+      <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Corrosion Assessment</div>
+        
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: `0.5px solid ${S.border}`, paddingBottom: 6 }}>
+          <span style={{ fontSize: 12, color: S.text2 }}>Thermodynamic State:</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: statusColor, display: "flex", alignItems: "center", gap: 4 }}>
+            {badgeEmoji} {stabilityState}
+          </span>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, paddingTop: 2 }}>
+          <span>Equilibrium Surface Product:</span>
+          <strong style={{ color: S.steel, textAlign: "right" }}>{chemicalSpecies}</strong>
+        </div>
+
+        {/* Dynamic Risk Bar Gauge */}
+        <div style={{ marginTop: 4 }}>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}>
+            <div style={{ 
+              width: stabilityState.includes("Immunity") ? "33%" : stabilityState.includes("Passivation") ? "66%" : "100%", 
+              height: "100%", 
+              background: statusColor 
+            }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
@@ -846,12 +983,9 @@ function Dashboard({ plan, onBack }) {
                             {/* ✅ MOUNT DYNAMIC LABORATORY TENSILE TEST DATA PLOTTER ENGINE */}
               {selectedGraph === "stress-strain" && <StressStrainCalculations />}
 
-              {selectedGraph === "pourbaix" && (
-                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Pourbaix Electrochemical Corrosion Workspace</div>
-                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the pH-Potential stability grid. Coming soon: Active passivation boundary shifts.</div>
-                </div>
-              )}
+                            {/* ✅ MOUNT DYNAMIC INTERACTIVE POURBAIX STABILITY CALCULATOR */}
+              {selectedGraph === "pourbaix" && <PourbaixCalculations />}
+
               {selectedGraph === "jominy" && (
                 <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Jominy End-Quench Hardenability Workspace</div>
