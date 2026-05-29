@@ -489,19 +489,20 @@ function EllinghamCalculations() {
         <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Thermodynamic Potentials</div>
         
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
-            <span>$\Delta G^\circ$ of {values.name}:</span>
-            <strong style={{ color: deltaG < -600 ? "#c0392b" : S.steel }}>{deltaG.toFixed(0)} kJ/mol $O_2$</strong>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
+              <span>ΔG° of {values.name}:</span>
+              <strong style={{ color: deltaG < -600 ? "#c0392b" : S.steel }}>{deltaG.toFixed(0)} kJ/mol O₂</strong>
+            </div>
+            <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}>
+              <div style={{ width: `${Math.min(100, (Math.abs(deltaG) / 1200) * 100)}%`, height: "100%", background: "#2c3e50" }} />
+            </div>
           </div>
-          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}>
-            <div style={{ width: `${Math.min(100, (Math.abs(deltaG) / 1200) * 100)}%`, height: "100%", background: "#2c3e50" }} />
-          </div>
-        </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, borderTop: `0.5px solid ${S.border}`, paddingTop: 6, marginTop: 2 }}>
-          <span>Carbon Reduction Potential ($2CO \rightarrow 2CO_2$):</span>
-          <strong>{deltaG_CO.toFixed(0)} kJ/mol $O_2$</strong>
-        </div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, borderTop: `0.5px solid ${S.border}`, paddingTop: 6, marginTop: 2 }}>
+            <span>Carbon Reduction Potential (2CO → 2CO₂):</span>
+            <strong>{deltaG_CO.toFixed(0)} kJ/mol O₂</strong>
+          </div>
+
       </div>
 
       <div style={{ fontSize: 12, fontStyle: "italic", color: isReducibleByCarbon ? "#27ae60" : "#d35400", textAlign: "center", borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4, fontWeight: 600 }}>
