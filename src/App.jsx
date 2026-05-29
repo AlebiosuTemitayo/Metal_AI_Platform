@@ -608,6 +608,80 @@ function TttCctCalculations() {
     </div>
   );
 }
+// 🎛️ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 1 (STRESS-STRAIN)
+function StressStrainCalculations() {
+  const [diameter, setDiameter] = useState(12.7); // Standard ASTM E8 spec in mm
+  const [gaugeLength, setGaugeLength] = useState(50.0); // mm
+  const [load, setLoad] = useState(45); // Applied tensile force in kN
+  const [extension, setExtension] = useState(0.15); // Displaced stretch elongation in mm
+
+  // Core ASTM E8 Engineering Calculations
+  const radius = diameter / 2;
+  const originalArea = Math.PI * Math.pow(radius, 2); // mm² cross-section area
+  
+  // Force conversion (kN * 1000 = Newtons), Stress = Force / Area (MPa)
+  const engineeringStress = (load * 1000) / originalArea;
+  
+  // Strain = change in length / original length (dimensionless ratio)
+  const engineeringStrain = extension / gaugeLength;
+  
+  // Elastic Modulus E = Stress / Strain. Convert MPa to GPa by dividing by 1000
+  const youngsModulus = (engineeringStrain > 0) ? (engineeringStress / engineeringStrain) / 1000 : 0;
+
+  return (
+    <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Engineering Stress-Strain Lab Data Plotter</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1.25rem" }}>Input raw tensile laboratory metrics to map dynamic load transformation boundaries.</div>
+
+      {/* Geometrical Testing Specimen Input Form Matrix */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Specimen Diameter (mm)</label>
+          <input type="number" step="0.1" min="1" value={diameter} onChange={(e) => setDiameter(parseFloat(e.target.value) || 0)} style={{ padding: "6px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff" }} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Initial Gauge Length (mm)</label>
+          <input type="number" step="0.5" min="1" value={gaugeLength} onChange={(e) => setGaugeLength(parseFloat(e.target.value) || 0)} style={{ padding: "6px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff" }} />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Applied Pulling Load (kN)</label>
+          <input type="range" min="5" max="120" step="1" value={load} onChange={(e) => setLoad(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: S.steel }}>{load} kN</span>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Extensometer Extension (mm)</label>
+          <input type="range" min="0.01" max="1.5" step="0.01" value={extension} onChange={(e) => setExtension(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: S.steel }}>{extension} mm</span>
+        </div>
+      </div>
+
+      {/* Dynamic Calculated Mechanical Properties Summary Panel */}
+      <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Tensile Specimen Mechanics</div>
+        
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
+            <span>Calculated Engineering Stress:</span>
+            <strong>{engineeringStress.toFixed(1)} MPa (N/mm²)</strong>
+          </div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}>
+            <div style={{ width: `${Math.min(100, (engineeringStress / 800) * 100)}%`, height: "100%", background: S.steel }} />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4 }}>
+          <span>Extensometer Strain Yield:</span>
+          <strong style={{ color: engineeringStrain * 100 > 2.0 ? "#d35400" : S.steel }}>{(engineeringStrain * 100).toFixed(3)} % Elongation</strong>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
+          <span>Modulus of Elasticity (Young's Modulus E):</span>
+          <strong style={{ color: S.gold }}>{youngsModulus.toFixed(1)} GPa</strong>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
@@ -730,12 +804,9 @@ function Dashboard({ plan, onBack }) {
                            {/* ✅ MOUNT DYNAMIC KINETICS COOLING TRANSFORMATION CALCULATOR */}
               {selectedGraph === "ttt-cct" && <TttCctCalculations />}
 
-              {selectedGraph === "stress-strain" && (
-                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Tensile Stress-Strain Plotter Workspace</div>
-                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Mechanical Tensile testing deck. Coming soon: ASTM E8 raw lab data calculation rows.</div>
-                </div>
-              )}
+                            {/* ✅ MOUNT DYNAMIC LABORATORY TENSILE TEST DATA PLOTTER ENGINE */}
+              {selectedGraph === "stress-strain" && <StressStrainCalculations />}
+
               {selectedGraph === "pourbaix" && (
                 <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Pourbaix Electrochemical Corrosion Workspace</div>
