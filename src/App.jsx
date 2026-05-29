@@ -352,6 +352,8 @@ function EngineerPanel({ plan }) {
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
+  const [labCategory, setLabCategory] = useState(null); // <── PASTE THIS: Tracks "constant" or "input" choice
+  const [selectedGraph, setSelectedGraph] = useState(null); // Tracks the open graph page
   const [tempKey, setTempKey] = useState("");
   const planInfo = PLANS.find((p) => p.id === plan);
   const tc = { free: { bg: "#f0f0f0", color: "#888" }, pro: { bg: "#e8f4fd", color: "#1a6fa0" }, max: { bg: S.goldLight, color: S.gold } }[plan];
@@ -387,18 +389,47 @@ function Dashboard({ plan, onBack }) {
           Sign out
         </div>
       </div>
-      <div style={{ display: "flex", gap: 8, marginBottom: "1.25rem" }}>
-        {[
-          { id: "consult", label: "Consultation" },
-          { id: "brief", label: "Project brief" },
-          { id: "eng", label: "Book engineer", locked: plan !== "max" },
-        ].map((t) => (
+     <div style={{ display: "flex", gap: 8, marginBottom: "1.25rem" }}>
+  {[
+    { id: "consult", label: "Consultation" },
+    { id: "brief", label: "Project brief" },
+    { id: "eng", label: "Book engineer", locked: plan !== "max" },
+    { id: "lab", label: "🔬 Metallurgical Lab" }, // <── PASTE THIS EXPLICIT FOURTH LINE RIGHT HERE
+  ].map((t) => (
+
           <button key={t.id} onClick={() => setTab(t.id)} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "🔒 "}{t.label}</button>
         ))}
       </div>
-      <div style={{ display: tab === "consult" ? "block" : "none" }}><Chat /></div>
+           <div style={{ display: tab === "consult" ? "block" : "none" }}><Chat /></div>
       <div style={{ display: tab === "brief" ? "block" : "none" }}><Brief /></div>
       <div style={{ display: tab === "eng" ? "block" : "none" }}><EngineerPanel plan={plan} /></div>
+
+      {/* 🔬 INTERACTIVE METALLURGICAL LAB WORKSPACE SCREEN */}
+      {tab === "lab" && (
+        <div style={card}>
+          {/* VIEW LEVEL 1: THE TWO CATEGORIES MASTER HOMEPAGE */}
+          {!labCategory && (
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: S.steel, marginBottom: 4 }}>🔬 Metallurgical Laboratory Suite</div>
+              <div style={{ fontSize: 13, color: S.text2, marginBottom: "1.25rem" }}>Select an analytical module branch directory to explore core engineering diagrams.</div>
+              
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                {/* Left Clickable Card: Category 1 */}
+                <div onClick={() => setLabCategory("constant")} style={{ border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, padding: 14, background: S.bg2, cursor: "pointer" }}>
+                  <div style={{ fontSize: 24, marginBottom: 6 }}>🛑</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.text }}>Category 1</div>
+                  <div style={{ fontSize: 12, color: S.text2, marginTop: 2, fontWeight: 500 }}>Constant Value reference maps. Fixed thermodynamic structural bounds.</div>
+                </div>
+
+                {/* Right Clickable Card: Category 2 */}
+                <div onClick={() => setLabCategory("input")} style={{ border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, padding: 14, background: S.bg2, cursor: "pointer" }}>
+                  <div style={{ fontSize: 24, marginBottom: 6 }}>🎛️</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.text }}>Category 2</div>
+                  <div style={{ fontSize: 12, color: S.text2, marginTop: 2, fontWeight: 500 }}>Input Value graphs. Dynamic environmental lab calculators.</div>
+                </div>
+              </div>
+              </div>
+      )}
     </div>
   );
 }
