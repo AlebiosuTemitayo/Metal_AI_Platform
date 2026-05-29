@@ -1102,19 +1102,21 @@ const [tab, setTab] = useState(() => {
   );
 }
 
-// 🔑 PHASE 1: PRODUCTION ACCOUNT CONTROLLER & PERSISTENT SESSION GATEKEEPER
+// 🔑 PHASE 1 PRODUCTION ROUTER: INITIAL MARKETING SPLASH PAGE -> AUTH TERMINAL -> CORE WORKSPACE
 export default function App() {
-  // Check browser cache for existing login sessions on initial page paint
+  // Check browser cache for existing active login tokens on initial page load
   const [userSession, setUserSession] = useState(() => {
     return localStorage.getItem("METAL_ACTIVE_USER") || null;
   });
 
+  // Inner-app routing states
+  const [viewMode, setViewMode] = useState("splash"); // "splash" (Initial interface) or "auth" (Login page)
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullname, setFullname] = useState("");
 
-  // Handle account generation or logging in
+  // Handle account profile processing or secure sandbox logins
   const handleAuthSubmit = (e) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) {
@@ -1125,9 +1127,9 @@ export default function App() {
     // Capture user profile handle identifier string
     const userIdentifier = isSignUp ? (fullname.trim() || email.split("@")[0]) : email.split("@")[0];
     
-    // Lock session securely into local persistent hardware cache
+    // Lock active session securely into local persistent hardware cache
     localStorage.setItem("METAL_ACTIVE_USER", userIdentifier);
-    localStorage.setItem("METAL_ACTIVE_PLAN", isSignUp ? "pro" : "max"); // Default tier mapping
+    localStorage.setItem("METAL_ACTIVE_PLAN", isSignUp ? "pro" : "max");
     
     setUserSession(userIdentifier);
   };
@@ -1135,55 +1137,94 @@ export default function App() {
   const handleSignOut = () => {
     localStorage.removeItem("METAL_ACTIVE_USER");
     localStorage.removeItem("METAL_ACTIVE_PLAN");
+    localStorage.removeItem("METAL_ACTIVE_TAB");
     window.location.reload();
   };
 
-  // 🚪 RENDER AUTHENTICATION REGISTRATION MATRIX IF NO COOKIE FOUND
-  if (!userSession) {
+  // IF USER IS FULLY LOGGED IN: RENDERS ACTIVE REPLICA INTERFACE & CALCULATOR GRID
+  if (userSession) {
+    const cachedPlan = localStorage.getItem("METAL_ACTIVE_PLAN") || "pro";
+    return <Dashboard plan={cachedPlan} onBack={handleSignOut} />;
+  }
+
+  // 🗺️ STAGE 1: INITIAL WELCOME SCREEN WORKSPACE VIEW INTERFACE
+  if (viewMode === "splash") {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f7f7f5", fontFamily: "system-ui, sans-serif", padding: "1rem" }}>
-        <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, padding: "2rem", maxWidth: 400, width: "100%", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
-          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
-            <span style={{ fontSize: 32 }}>🔩</span>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#1e2d3d", margin: "8px 0 2px 0" }}>Metal AI Platform</h2>
-            <p style={{ fontSize: 13, color: "#6b6b6b", margin: 0 }}>Advanced Metallurgical Engineering Consultant Core</p>
-          </div>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f7f7f5", fontFamily: "system-ui, sans-serif", padding: "1.5rem" }}>
+        <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 16, padding: "2.5rem 2rem", maxWidth: 500, width: "100%", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.05)", textAlign: "center" }}>
+          
+          {/* Brand Icon Badge Emblem */}
+          <div style={{ width: 64, height: 64, borderRadius: 16, background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, margin: "0 auto 1.25rem auto" }}>🔩</div>
+          
+          <h1 style={{ fontSize: 24, fontWeight: 800, color: S.steel, margin: "0 0 8px 0" }}>Metal AI Platform</h1>
+          <div style={{ width: 40, height: 3, background: S.goldMid, margin: "0 auto 1rem auto", borderRadius: 99 }} />
+          
+          {/* 📝 YOUR CUSTOM ENTERPRISE METALLURGICAL OVERVIEW TEXT BLOCK */}
+          <p style={{ fontSize: 14, color: S.text, lineHeight: "1.6", margin: "0 0 2rem 0", fontWeight: 500 }}>
+            Welcome to the standard digital workspace replica of your senior AI metallurgical engineering consultant. 
+            This advanced operations hub provides high-velocity cloud access to custom microstructural lookup maps, 
+            isothermal transformation matrices, and interactive laboratory data calculators calibrated to strict industry testing directives.
+          </p>
 
-          <form onSubmit={handleAuthSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {isSignUp && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b6b" }}>Full Professional Name</label>
-                <input type="text" value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Dr. Jane Doe" style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 13 }} required />
-              </div>
-            )}
-            
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b6b" }}>Academic / Enterprise Email</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="metallurgist@university.edu" style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 13 }} required />
-            </div>
+          {/* ⚡ THE INITIAL CLICKABLE ACTION TRIGGER BUTTON BUTTON */}
+          <button onClick={() => setViewMode("auth")} style={{ background: S.steel, color: "#ffffff", border: "none", width: "100%", padding: "12px 24px", borderRadius: S.radiusMd, fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "0.2s" }}>
+            Get Started →
+          </button>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b6b" }}>Secure Key Access Password</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 13 }} required />
-            </div>
-
-            <button type="submit" style={{ background: "#1e2d3d", color: "#ffffff", border: "none", padding: "10px", borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 6, transition: "0.2s" }}>
-              {isSignUp ? "Generate Research Account" : "Initialize Secure Terminal Sign-In"}
-            </button>
-          </form>
-
-          <div style={{ textAlign: "center", marginTop: "1.25rem", borderTop: "0.5px solid #e2e8f0", paddingTop: "1rem" }}>
-            <button onClick={() => setIsSignUp(!isSignUp)} style={{ background: "none", border: "none", color: "#b8860b", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-              {isSignUp ? "Already registered? Access secure terminal" : "Need credentials? Request client sandbox profile"}
-            </button>
+          <div style={{ fontSize: 11, color: S.text3, marginTop: 14, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
+            Authorized Academic & Enterprise Clearance Only
           </div>
         </div>
       </div>
     );
   }
 
-  // 🎛️ USER AUTHENTICATED: RENDER ACTIVE PLATFORM CONTROLLERS
-  const cachedPlan = localStorage.getItem("METAL_ACTIVE_PLAN") || "pro";
-  return <Dashboard plan={cachedPlan} onBack={handleSignOut} />;
-}
+  // 🔑 STAGE 2: TERMINAL SIGN-IN WEB INTERFACE ACCOUNT FORM PORTAL
+  return (
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f7f7f5", fontFamily: "system-ui, sans-serif", padding: "1rem" }}>
+      <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, padding: "2rem", maxWidth: 400, width: "100%", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+        
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
+          <button onClick={() => setViewMode("splash")} style={{ background: "none", border: "none", color: S.text2, fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0 }}>← Return</button>
+          <span style={{ fontSize: 20 }}>🔩</span>
+        </div>
 
+        <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: S.steel, margin: "0 0 4px 0" }}>
+            {isSignUp ? "Create Research Credentials" : "Terminal Identity Verification"}
+          </h2>
+          <p style={{ fontSize: 12, color: S.text3, margin: 0 }}>Initialize secure microchip socket connection gateway</p>
+        </div>
+
+        <form onSubmit={handleAuthSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {isSignUp && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Full Professional Name</label>
+              <input type="text" value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Dr. Jane Doe" style={{ padding: "8px 12px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13 }} required />
+            </div>
+          )}
+          
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Academic / Enterprise Email</label>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="metallurgist@university.edu" style={{ padding: "8px 12px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13 }} required />
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Secure Key Access Password</label>
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ padding: "8px 12px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13 }} required />
+          </div>
+
+          <button type="submit" style={{ background: S.steel, color: "#ffffff", border: "none", padding: "10px", borderRadius: S.radiusMd, fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 6 }}>
+            {isSignUp ? "Generate Research Account" : "Initialize Secure Terminal Sign-In"}
+          </button>
+        </form>
+
+        <div style={{ textAlign: "center", marginTop: "1.25rem", borderTop: `0.5px solid ${S.border}`, paddingTop: "1rem" }}>
+          <button onClick={() => setIsSignUp(!isSignUp)} style={{ background: "none", border: "none", color: S.goldMid, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+            {isSignUp ? "Already registered? Access secure terminal" : "Need credentials? Request client sandbox profile"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
