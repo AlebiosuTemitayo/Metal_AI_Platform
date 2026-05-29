@@ -608,32 +608,56 @@ function TttCctCalculations() {
     </div>
   );
 }
-// 🎛️ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 1 (STRESS-STRAIN)
+// 🎛️ UPGRADED METALLURGICAL ENGINE: CAT 2 DIAGRAM 1 (STRESS-STRAIN SOLVER)
 function StressStrainCalculations() {
-  const [diameter, setDiameter] = useState(12.7); // Standard ASTM E8 spec in mm
+  const [solveMode, setSolveMode] = useState("extension"); // "extension" or "modulus"
+  const [diameter, setDiameter] = useState(12.7); // mm
   const [gaugeLength, setGaugeLength] = useState(50.0); // mm
-  const [load, setLoad] = useState(45); // Applied tensile force in kN
-  const [extension, setExtension] = useState(0.15); // Displaced stretch elongation in mm
+  const [load, setLoad] = useState(45); // kN
+  
+  // Independent variable inputs based on active mode choice
+  const [extension, setExtension] = useState(0.15); // mm (used in Mode A)
+  const [knownModulus, setKnownModulus] = useState(200); // GPa (used in Mode B)
 
-  // Core ASTM E8 Engineering Calculations
+  // 1. Core Geometrical Calculation (ASTM E8 Area)
   const radius = diameter / 2;
-  const originalArea = Math.PI * Math.pow(radius, 2); // mm² cross-section area
-  
-  // Force conversion (kN * 1000 = Newtons), Stress = Force / Area (MPa)
-  const engineeringStress = (load * 1000) / originalArea;
-  
-  // Strain = change in length / original length (dimensionless ratio)
-  const engineeringStrain = extension / gaugeLength;
-  
-  // Elastic Modulus E = Stress / Strain. Convert MPa to GPa by dividing by 1000
-  const youngsModulus = (engineeringStrain > 0) ? (engineeringStress / engineeringStrain) / 1000 : 0;
+  const originalArea = Math.PI * Math.pow(radius, 2); // mm²
+  const engineeringStress = (load * 1000) / originalArea; // MPa
+
+  // 2. Multi-Mode Algorithmic Routing Matrix
+  let activeStrain = 0;
+  let activeExtension = 0;
+  let activeModulus = 0;
+
+  if (solveMode === "extension") {
+    // Mode A: Extension is given, calculate Modulus & Strain naturally
+    activeExtension = extension;
+    activeStrain = extension / gaugeLength;
+    activeModulus = (activeStrain > 0) ? (engineeringStress / activeStrain) / 1000 : 0;
+  } else {
+    // Mode B: Extension is missing! Back-calculate using user's inputted Modulus
+    activeModulus = knownModulus;
+    // Strain = Stress / Elasticity (Convert GPa down to MPa first)
+    activeStrain = (knownModulus > 0) ? engineeringStress / (knownModulus * 1000) : 0;
+    // Extension = Strain * Original Gauge Length
+    activeExtension = activeStrain * gaugeLength;
+  }
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Engineering Stress-Strain Lab Data Plotter</div>
-      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1.25rem" }}>Input raw tensile laboratory metrics to map dynamic load transformation boundaries.</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Engineering Stress-Strain Multi-Mode Solver</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1.25rem" }}>Toggle calculation priorities to reverse-engineer missing laboratory extensometer vectors.</div>
 
-      {/* Geometrical Testing Specimen Input Form Matrix */}
+      {/* 🔄 MODE TOGGLE DROPDOWN SWITCH */}
+      <div style={{ marginBottom: "1.25rem", display: "flex", flexDirection: "column", gap: 4 }}>
+        <label style={{ fontSize: 11, fontWeight: 700, color: S.goldMid, textTransform: "uppercase" }}>Target Calculation Priority</label>
+        <select value={solveMode} onChange={(e) => setSolveMode(e.target.value)} style={{ padding: "8px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: S.bg2, fontWeight: 600, color: S.text }}>
+          <option value="extension">Solve For Modulus (Extension data is Given)</option>
+          <option value="modulus">Solve For Extension (Young's Modulus is Given)</option>
+        </select>
+      </div>
+
+      {/* Laboratory Specimen Dimensional Matrix */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1.25rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Specimen Diameter (mm)</label>
@@ -648,14 +672,24 @@ function StressStrainCalculations() {
           <input type="range" min="5" max="120" step="1" value={load} onChange={(e) => setLoad(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
           <span style={{ fontSize: 12, fontWeight: 600, color: S.steel }}>{load} kN</span>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Extensometer Extension (mm)</label>
-          <input type="range" min="0.01" max="1.5" step="0.01" value={extension} onChange={(e) => setExtension(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: S.steel }}>{extension} mm</span>
-        </div>
+
+        {/* 🎛️ DYNAMIC INPUT RENDERING CHANGER */}
+        {solveMode === "extension" ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Input Extensometer Extension (mm)</label>
+            <input type="range" min="0.01" max="1.5" step="0.01" value={extension} onChange={(e) => setExtension(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
+            <span style={{ fontSize: 12, fontWeight: 600, color: S.steel }}>{extension} mm</span>
+          </div>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Input Known Alloy Modulus (E in GPa)</label>
+            <input type="number" step="5" min="10" value={knownModulus} onChange={(e) => setKnownModulus(parseFloat(e.target.value) || 0)} style={{ padding: "6px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff", fontWeight: 600 }} />
+            <span style={{ fontSize: 11, color: S.text3 }}>e.g. Aluminum ~70, Steel ~200, Copper ~110</span>
+          </div>
+        )}
       </div>
 
-      {/* Dynamic Calculated Mechanical Properties Summary Panel */}
+      {/* Output Presentation Results Panel */}
       <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 10 }}>
         <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Tensile Specimen Mechanics</div>
         
@@ -670,13 +704,18 @@ function StressStrainCalculations() {
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4 }}>
+          <span>{solveMode === "modulus" ? "Predicted Extension (Back-Calculated):" : "Extensometer Extension:"}</span>
+          <strong style={{ color: S.steel }}>{activeExtension.toFixed(4)} mm</strong>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
           <span>Extensometer Strain Yield:</span>
-          <strong style={{ color: engineeringStrain * 100 > 2.0 ? "#d35400" : S.steel }}>{(engineeringStrain * 100).toFixed(3)} % Elongation</strong>
+          <strong>{(activeStrain * 100).toFixed(3)} % Elongation</strong>
         </div>
 
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12 }}>
           <span>Modulus of Elasticity (Young's Modulus E):</span>
-          <strong style={{ color: S.gold }}>{youngsModulus.toFixed(1)} GPa</strong>
+          <strong style={{ color: S.gold }}>{activeModulus.toFixed(1)} GPa</strong>
         </div>
       </div>
     </div>
