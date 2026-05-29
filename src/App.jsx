@@ -1147,37 +1147,53 @@ export default function App() {
     return <Dashboard plan={cachedPlan} onBack={handleSignOut} />;
   }
 
-  // 🗺️ STAGE 1: INITIAL WELCOME SCREEN WORKSPACE VIEW INTERFACE
+    // 🗺️ STAGE 1: UPGRADED HIGH-END METALLURGICAL INDUSTRIAL INTERFACE VIEW
   if (viewMode === "splash") {
     return (
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f7f7f5", fontFamily: "system-ui, sans-serif", padding: "1.5rem" }}>
-        <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 16, padding: "2.5rem 2rem", maxWidth: 500, width: "100%", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.05)", textAlign: "center" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", padding: "1.5rem", position: "relative", overflow: "hidden", fontFamily: "system-ui, sans-serif", background: "linear-gradient(135deg, #11161b 0%, #202b36 50%, #0d1114 100%)" }}>
+        
+        {/* Abstract Geometrical Metal Facet Shards Background Layer */}
+        <div style={{ position: "absolute", top: "-10%", left: "-10%", width: "60%", height: "60%", background: "linear-gradient(45deg, rgba(127,140,141,0.15), transparent)", transform: "rotate(15deg)", clipPath: "polygon(0 0, 100% 20%, 80% 100%, 0 80%)" }} />
+        <div style={{ position: "absolute", bottom: "-5%", right: "-5%", width: "50%", height: "60%", background: "linear-gradient(225deg, rgba(212,160,23,0.08), transparent)", transform: "rotate(-10deg)", clipPath: "polygon(20% 0, 100% 40%, 70% 100%, 0 100%)" }} />
+
+        {/* 💻 Glassmorphic Screen Container Panel */}
+        <div style={{ position: "relative", zIndex: 10, background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.12)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: 24, padding: "3rem 2rem", maxWidth: 460, width: "100%", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.5)", textAlign: "center" }}>
           
-          {/* Brand Icon Badge Emblem */}
-          <div style={{ width: 64, height: 64, borderRadius: 16, background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, margin: "0 auto 1.25rem auto" }}>🔩</div>
+          {/* ⚛️ Layered Atomic Metal Ingot Vector Emblem */}
+          <div style={{ position: "relative", width: 80, height: 80, margin: "0 auto 1.5rem auto", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            {/* Outer Atomic Orbital Electron Rings */}
+            <svg style={{ position: "absolute", width: "100%", height: "100%", transform: "rotate(45deg)" }} viewBox="0 0 100 100">
+              <ellipse cx="50" cy="50" rx="45" ry="16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
+              <ellipse cx="50" cy="50" rx="45" ry="16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" style={{ transform: "rotate(60deg)", transformOrigin: "50px 50px" }} />
+              <ellipse cx="50" cy="50" rx="45" ry="16" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" style={{ transform: "rotate(120deg)", transformOrigin: "50px 50px" }} />
+            </svg>
+            {/* Inner Premium Polished Steel Structural Ingot Inset */}
+            <div style={{ position: "relative", zIndex: 2, width: 44, height: 26, background: "linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%)", borderRadius: 4, transform: "rotate(-15deg) skewX(-20deg)", boxShadow: "5px 5px 15px rgba(0,0,0,0.3), inset 1px 1px 0px rgba(255,255,255,0.5)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: "90%", height: "2px", background: "rgba(255,255,255,0.3)", position: "absolute", top: 2, transform: "rotate(1deg)" }} />
+            </div>
+          </div>
           
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: S.steel, margin: "0 0 8px 0" }}>Metal AI Platform</h1>
-          <div style={{ width: 40, height: 3, background: S.goldMid, margin: "0 auto 1rem auto", borderRadius: 99 }} />
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#ffffff", margin: "0 0 6px 0", letterSpacing: "0.5px" }}>Metal AI Platform</h1>
+          <p style={{ fontSize: 12, fontWeight: 600, color: "#d4a017", textTransform: "uppercase", letterSpacing: "1.5px", margin: "0 0 1.25rem 0" }}>Core Intelligence Terminal</p>
           
-          {/* 📝 YOUR CUSTOM ENTERPRISE METALLURGICAL OVERVIEW TEXT BLOCK */}
-          <p style={{ fontSize: 14, color: S.text, lineHeight: "1.6", margin: "0 0 2rem 0", fontWeight: 500 }}>
-            Welcome to the standard digital workspace replica of your senior AI metallurgical engineering consultant. 
-            This advanced operations hub provides high-velocity cloud access to custom microstructural lookup maps, 
-            isothermal transformation matrices, and interactive laboratory data calculators calibrated to strict industry testing directives.
+          <p style={{ fontSize: 13.5, color: "#94a3b8", lineHeight: "1.6", margin: "0 0 2.25rem 0", padding: "0 8px" }}>
+            Cloud access node for your senior metallurgical engineering consultant. 
+            Providing high-velocity access to active microstructural lookup maps, phase kinetics simulators, and dynamic laboratory analytics tools.
           </p>
 
-          {/* ⚡ THE INITIAL CLICKABLE ACTION TRIGGER BUTTON BUTTON */}
-          <button onClick={() => setViewMode("auth")} style={{ background: S.steel, color: "#ffffff", border: "none", width: "100%", padding: "12px 24px", borderRadius: S.radiusMd, fontSize: 14, fontWeight: 700, cursor: "pointer", transition: "0.2s" }}>
-            Get Started →
+          {/* ⚡ Frost-Glass Action Interactive Trigger Button */}
+          <button onClick={() => setViewMode("auth")} style={{ position: "relative", width: "100%", padding: "14px", borderRadius: 12, background: "rgba(255, 255, 255, 0.08)", border: "1px solid rgba(255, 255, 255, 0.2)", color: "#ffffff", fontSize: 15, fontWeight: 700, cursor: "pointer", transition: "all 0.3s ease", boxShadow: "0 4px 15px rgba(0,0,0,0.2)", backdropFilter: "blur(4px)" }}>
+            Get Started
           </button>
 
-          <div style={{ fontSize: 11, color: S.text3, marginTop: 14, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.5 }}>
-            Authorized Academic & Enterprise Clearance Only
+          <div style={{ fontSize: 10, color: "#64748b", marginTop: 18, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px" }}>
+            🔒 Secure Academic & Enterprise Layer
           </div>
         </div>
       </div>
     );
   }
+
 
   // 🔑 STAGE 2: TERMINAL SIGN-IN WEB INTERFACE ACCOUNT FORM PORTAL
   return (
