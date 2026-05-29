@@ -396,7 +396,6 @@ function Dashboard({ plan, onBack }) {
           <button key={t.id} onClick={() => setTab(t.id)} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "🔒 "}{t.label}</button>
         ))}
       </div>
-      // ✅ CHANGE IT BACK TO THIS REGULAR SINGLE-LINE STATE:
       <div style={{ display: tab === "consult" ? "block" : "none" }}><Chat /></div>
       <div style={{ display: tab === "brief" ? "block" : "none" }}><Brief /></div>
       <div style={{ display: tab === "eng" ? "block" : "none" }}><EngineerPanel plan={plan} /></div>
