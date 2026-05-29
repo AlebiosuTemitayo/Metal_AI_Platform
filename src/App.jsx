@@ -429,6 +429,8 @@ function Dashboard({ plan, onBack }) {
                 </div>
               </div>
               </div>
+               )}
+        </div>
       )}
     </div>
   );
