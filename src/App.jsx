@@ -438,6 +438,80 @@ function IronCarbonCalculations() {
   );
 }
 
+// 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 2 (ELLINGHAM)
+function EllinghamCalculations() {
+  const [metal, setMetal] = useState("Fe");
+  const [temp, setTemp] = useState(800); // °C
+
+  // Thermodynamic Reference Constants (Standard Free Energy Equations: dG = dH - T*dS)
+  // Approximations for metal oxide formations per mole of O2
+  const values = {
+    Cu: { name: "Copper Oxide (2Cu2O)", dH: -338, dS: -0.14 },
+    Fe: { name: "Iron Oxide (2FeO)", dH: -544, dS: -0.13 },
+    Al: { name: "Aluminum Oxide (2/3 Al2O3)", dH: -1117, dS: -0.21 }
+  }[metal];
+
+  const T_Kelvin = temp + 273.15;
+  const deltaG = values.dH - (T_Kelvin * values.dS); // kJ/mol O2
+
+  // Carbon Monoxide reducing line approximation (2CO + O2 -> 2CO2)
+  const deltaG_CO = -565 + (T_Kelvin * 0.17);
+
+  // Pyrometallurgical metallurgical rule: Metal can be reduced if the CO line is LOWER than the Metal Oxide line
+  const isReducibleByCarbon = deltaG_CO < deltaG;
+
+  return (
+    <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Ellingham Thermodynamics & Reduction Predictor</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Select a metallurgical element to calculate Gibbs Free Energy ($\Delta G$) stability boundaries.</div>
+
+      {/* Selector Panels */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Target Metal Oxide System</label>
+          <select value={metal} onChange={(e) => setMetal(e.target.value)} style={{ padding: "6px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff" }}>
+            <option value="Cu">Copper System (Low Stability)</option>
+            <option value="Fe">Iron System (Medium Stability)</option>
+            <option value="Al">Aluminum System (Refractory Stability)</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
+            <span>Furnace Heat: <strong>{temp}°C</strong></span>
+          </div>
+          <input type="range" min="100" max="1500" step="50" value={temp} onChange={(e) => setTemp(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
+        </div>
+      </div>
+
+      {/* Thermochemical Outputs Panel */}
+      <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Thermodynamic Potentials</div>
+        
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
+            <span>$\Delta G^\circ$ of {values.name}:</span>
+            <strong style={{ color: deltaG < -600 ? "#c0392b" : S.steel }}>{deltaG.toFixed(0)} kJ/mol $O_2$</strong>
+          </div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}>
+            <div style={{ width: `${Math.min(100, (Math.abs(deltaG) / 1200) * 100)}%`, height: "100%", background: "#2c3e50" }} />
+          </div>
+        </div>
+
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, borderTop: `0.5px solid ${S.border}`, paddingTop: 6, marginTop: 2 }}>
+          <span>Carbon Reduction Potential ($2CO \rightarrow 2CO_2$):</span>
+          <strong>{deltaG_CO.toFixed(0)} kJ/mol $O_2$</strong>
+        </div>
+      </div>
+
+      <div style={{ fontSize: 12, fontStyle: "italic", color: isReducibleByCarbon ? "#27ae60" : "#d35400", textAlign: "center", borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4, fontWeight: 600 }}>
+        {isReducibleByCarbon 
+          ? `✅ Thermodynamically Feasible: Carbon/CO can reduce this oxide to pure metal at ${temp}°C.` 
+          : `❌ Extraction Blocked: Oxide layer is too stable. Requires a stronger reducing agent or electrolysis.`}
+      </div>
+    </div>
+  );
+}
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
@@ -554,12 +628,9 @@ function Dashboard({ plan, onBack }) {
 
               {selectedGraph === "iron-carbon" && <IronCarbonCalculations />}
 
-              {selectedGraph === "ellingham" && (
-                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Ellingham Oxidation Stability Workspace</div>
-                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Ellingham Free Energy calculator. Coming soon: Pyrometallurgical reduction stability vectors.</div>
-                </div>
-              )}
+                            {/* ✅ MOUNT DYNAMIC THERMODYNAMIC EXTRACTION GRAPH CALCULATOR */}
+              {selectedGraph === "ellingham" && <EllinghamCalculations />}
+
               {selectedGraph === "ttt-cct" && (
                 <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 TTT / CCT Kinetic Transformation Workspace</div>
