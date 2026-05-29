@@ -513,6 +513,101 @@ function EllinghamCalculations() {
     </div>
   );
 }
+// 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 3 (TTT/CCT)
+function TttCctCalculations() {
+  const [alloy, setAlloy] = useState("1045");
+  const [coolingMedia, setCoolingMedia] = useState("Oil");
+
+  // Heat Treatment Simulation Calculations
+  let coolingRateText = "";
+  let structureText = "";
+  let finalHardnessText = "";
+  let microstructures = { pearlite: 0, bainite: 0, martensite: 0 };
+
+  if (coolingMedia === "Furnace") {
+    coolingRateText = "Very Slow Continuous Cooling (~0.1°C/s) - Follows CCT Equilibrium Paths";
+    microstructures = { pearlite: 100, bainite: 0, martensite: 0 };
+    structureText = "100% Coarse Pearlite grains matrix. Uniformly soft, stress-relieved structural state.";
+    finalHardnessText = alloy === "1045" ? "15 HRC (Soft)" : "22 HRC (Medium-Soft)";
+  } else if (coolingMedia === "Oil") {
+    coolingRateText = "Moderate Industrial Quench (~25°C/s) - Crosses the Pearlite Nose Boundary";
+    if (alloy === "1045") {
+      microstructures = { pearlite: 45, bainite: 15, martensite: 40 };
+      structureText = "Mixed Microstructure: Fine Pearlite nodes + Acicular Bainite + Tempered Martensite shards.";
+      finalHardnessText = "42 HRC (Medium Hard)";
+    } else {
+      microstructures = { pearlite: 10, bainite: 20, martensite: 70 };
+      structureText = "High Alloy Shift: Pearlite nose avoided. Dominated by highly distorted Martensite matrices.";
+      finalHardnessText = "54 HRC (Hard)";
+    }
+  } else {
+    coolingRateText = "Severe Liquid Water Quench (~120°C/s) - Completely Bypasses the Transformation Nose";
+    microstructures = { pearlite: 0, bainite: 0, martensite: 100 };
+    structureText = "100% Fully Untempered Body-Centered Tetragonal (BCT) Martensite structure. Maximum internal lattice strain.";
+    finalHardnessText = alloy === "1045" ? "58 HRC (Very Hard / Brittle)" : "64 HRC (Maximum Brittle Hardness)";
+  }
+
+  return (
+    <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Isothermal TTT & Continuous CCT Quench Simulator</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Select an engineering alloy composition and model real-world thermal cooling paths.</div>
+
+      {/* Inputs Configuration Selection panel Grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: "1.25rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Steel Chemistry Designation</label>
+          <select value={alloy} onChange={(e) => setAlloy(e.target.value)} style={{ padding: "6px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff" }}>
+            <option value="1045">AISI 1045 (Medium Carbon Steel)</option>
+            <option value="4140">AISI 4140 (Chromoly Low-Alloy Steel)</option>
+          </select>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+          <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Severe Quenching Medium</label>
+          <select value={coolingMedia} onChange={(e) => setCoolingMedia(e.target.value)} style={{ padding: "6px 10px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13, background: "#fff" }}>
+            <option value="Furnace">Furnace Cooling (Annealing)</option>
+            <option value="Oil">Industrial Oil Bath (Medium Quench)</option>
+            <option value="Water">Agitated Water Jet (Severe Quench)</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Transformation Kinetics Outputs Panel */}
+      <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 8, marginBottom: 12 }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Kinetic Transformation Metrics</div>
+        
+        <div style={{ fontSize: 12, marginBottom: 4 }}>
+          Velocity Profile: <span style={{ fontWeight: 600, color: S.steel }}>{coolingRateText}</span>
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}><span>Pearlite Component Volume (Soft)</span><strong>{microstructures.pearlite}%</strong></div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${microstructures.pearlite}%`, height: "100%", background: S.steel }} /></div>
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}><span>Bainite Component Volume (Intermediate)</span><strong>{microstructures.bainite}%</strong></div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${microstructures.bainite}%`, height: "100%", background: S.goldMid }} /></div>
+        </div>
+
+        <div>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, marginBottom: 2 }}><span>Martensite Component Volume (Brittle Hard)</span><strong>{microstructures.martensite}%</strong></div>
+          <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${microstructures.martensite}%`, height: "100%", background: "#b23b3b" }} /></div>
+        </div>
+      </div>
+
+      <div style={{ borderTop: `0.5px solid ${S.border}`, paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ fontSize: 12, color: S.text2, maxWidth: "75%" }}>
+          🔬 <strong>Phase Lattice Matrix:</strong> {structureText}
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 10, fontWeight: 700, color: S.text3, textTransform: "uppercase" }}>Estimated Hardness</div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: S.gold }}>{finalHardnessText}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function Dashboard({ plan, onBack }) {
   const [tab, setTab] = useState("consult");
@@ -632,12 +727,9 @@ function Dashboard({ plan, onBack }) {
                             {/* ✅ MOUNT DYNAMIC THERMODYNAMIC EXTRACTION GRAPH CALCULATOR */}
               {selectedGraph === "ellingham" && <EllinghamCalculations />}
 
-              {selectedGraph === "ttt-cct" && (
-                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 TTT / CCT Kinetic Transformation Workspace</div>
-                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Time-Temperature phase maps. Coming soon: Martensitic cooling transformation paths.</div>
-                </div>
-              )}
+                           {/* ✅ MOUNT DYNAMIC KINETICS COOLING TRANSFORMATION CALCULATOR */}
+              {selectedGraph === "ttt-cct" && <TttCctCalculations />}
+
               {selectedGraph === "stress-strain" && (
                 <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
                   <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Tensile Stress-Strain Plotter Workspace</div>
