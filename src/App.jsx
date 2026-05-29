@@ -456,6 +456,52 @@ function Dashboard({ plan, onBack }) {
               </div>
             </div>
           )}
+                    {/* VIEW LEVEL 3: INDIVIDUAL WEBPAGES FOR EACH OF THE SIX SPECIFIC GRAPH WORKSPACES */}
+          {selectedGraph && (
+            <div>
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
+                <button onClick={() => setSelectedGraph(null)} style={{ background: "none", border: "none", color: S.goldMid, fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>← Back to Collection</button>
+              </div>
+
+              {selectedGraph === "iron-carbon" && (
+                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Iron-Carbon Phase Diagram Workspace</div>
+                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Iron-Carbon structural lookup map. Coming soon: Dynamic Phase Lever Rule solvers.</div>
+                </div>
+              )}
+              {selectedGraph === "ellingham" && (
+                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Ellingham Oxidation Stability Workspace</div>
+                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Ellingham Free Energy calculator. Coming soon: Pyrometallurgical reduction stability vectors.</div>
+                </div>
+              )}
+              {selectedGraph === "ttt-cct" && (
+                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 TTT / CCT Kinetic Transformation Workspace</div>
+                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Time-Temperature phase maps. Coming soon: Martensitic cooling transformation paths.</div>
+                </div>
+              )}
+              {selectedGraph === "stress-strain" && (
+                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Tensile Stress-Strain Plotter Workspace</div>
+                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Mechanical Tensile testing deck. Coming soon: ASTM E8 raw lab data calculation rows.</div>
+                </div>
+              )}
+              {selectedGraph === "pourbaix" && (
+                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Pourbaix Electrochemical Corrosion Workspace</div>
+                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the pH-Potential stability grid. Coming soon: Active passivation boundary shifts.</div>
+                </div>
+              )}
+              {selectedGraph === "jominy" && (
+                <div style={{ background: S.bg2, padding: 15, borderRadius: S.radiusMd, border: `1px solid ${S.border}` }}>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: S.steel }}>📊 Jominy End-Quench Hardenability Workspace</div>
+                  <div style={{ fontSize: 13, color: S.text2, marginTop: 4 }}>Welcome to the Depth-of-Hardening ledger. Coming soon: Rockwell HRC manual entry coordinate matrices.</div>
+                </div>
+              )}
+            </div>
+          )}
+
 
         </div>
       )}
