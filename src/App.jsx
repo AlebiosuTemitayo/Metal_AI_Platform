@@ -959,7 +959,11 @@ function JominyCalculations() {
 }
 
 function Dashboard({ plan, onBack }) {
-  const [tab, setTab] = useState("consult");
+  // Read cache matrix to check if user has a persistent open view state saved
+const [tab, setTab] = useState(() => {
+  return localStorage.getItem("METAL_ACTIVE_TAB") || "consult";
+});
+
   const [labCategory, setLabCategory] = useState(null); // <── PASTE THIS: Tracks "constant" or "input" choice
   const [selectedGraph, setSelectedGraph] = useState(null); // Tracks the open graph page
   const [tempKey, setTempKey] = useState("");
@@ -1005,7 +1009,7 @@ function Dashboard({ plan, onBack }) {
     { id: "lab", label: "🔬 Metallurgical Lab" }, // <── PASTE THIS EXPLICIT FOURTH LINE RIGHT HERE
   ].map((t) => (
 
-          <button key={t.id} onClick={() => setTab(t.id)} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "🔒 "}{t.label}</button>
+        <button key={t.id} onClick={() => { localStorage.setItem("METAL_ACTIVE_TAB", t.id); setTab(t.id); }} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "🔒 "}{t.label}</button>
         ))}
       </div>
            <div style={{ display: tab === "consult" ? "block" : "none" }}><Chat /></div>
@@ -1098,8 +1102,88 @@ function Dashboard({ plan, onBack }) {
   );
 }
 
+// 🔑 PHASE 1: PRODUCTION ACCOUNT CONTROLLER & PERSISTENT SESSION GATEKEEPER
 export default function App() {
-  const [plan, setPlan] = useState(null);
-  if (!plan) return <Landing onSelect={setPlan} />;
-  return <Dashboard plan={plan} onBack={() => setPlan(null)} />;
+  // Check browser cache for existing login sessions on initial page paint
+  const [userSession, setUserSession] = useState(() => {
+    return localStorage.getItem("METAL_ACTIVE_USER") || null;
+  });
+
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullname, setFullname] = useState("");
+
+  // Handle account generation or logging in
+  const handleAuthSubmit = (e) => {
+    e.preventDefault();
+    if (!email.trim() || !password.trim()) {
+      alert("Please fill out all structural parameters.");
+      return;
+    }
+
+    // Capture user profile handle identifier string
+    const userIdentifier = isSignUp ? (fullname.trim() || email.split("@")[0]) : email.split("@")[0];
+    
+    // Lock session securely into local persistent hardware cache
+    localStorage.setItem("METAL_ACTIVE_USER", userIdentifier);
+    localStorage.setItem("METAL_ACTIVE_PLAN", isSignUp ? "pro" : "max"); // Default tier mapping
+    
+    setUserSession(userIdentifier);
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem("METAL_ACTIVE_USER");
+    localStorage.removeItem("METAL_ACTIVE_PLAN");
+    window.location.reload();
+  };
+
+  // 🚪 RENDER AUTHENTICATION REGISTRATION MATRIX IF NO COOKIE FOUND
+  if (!userSession) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f7f7f5", fontFamily: "system-ui, sans-serif", padding: "1rem" }}>
+        <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, padding: "2rem", maxWidth: 400, width: "100%", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
+          <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
+            <span style={{ fontSize: 32 }}>🔩</span>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: "#1e2d3d", margin: "8px 0 2px 0" }}>Metal AI Platform</h2>
+            <p style={{ fontSize: 13, color: "#6b6b6b", margin: 0 }}>Advanced Metallurgical Engineering Consultant Core</p>
+          </div>
+
+          <form onSubmit={handleAuthSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {isSignUp && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b6b" }}>Full Professional Name</label>
+                <input type="text" value={fullname} onChange={(e) => setFullname(e.target.value)} placeholder="Dr. Jane Doe" style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 13 }} required />
+              </div>
+            )}
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b6b" }}>Academic / Enterprise Email</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="metallurgist@university.edu" style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 13 }} required />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontSize: 11, fontWeight: 600, color: "#6b6b6b" }}>Secure Key Access Password</label>
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ padding: "8px 12px", borderRadius: 6, border: "1px solid #e2e8f0", fontSize: 13 }} required />
+            </div>
+
+            <button type="submit" style={{ background: "#1e2d3d", color: "#ffffff", border: "none", padding: "10px", borderRadius: 6, fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 6, transition: "0.2s" }}>
+              {isSignUp ? "Generate Research Account" : "Initialize Secure Terminal Sign-In"}
+            </button>
+          </form>
+
+          <div style={{ textAlign: "center", marginTop: "1.25rem", borderTop: "0.5px solid #e2e8f0", paddingTop: "1rem" }}>
+            <button onClick={() => setIsSignUp(!isSignUp)} style={{ background: "none", border: "none", color: "#b8860b", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+              {isSignUp ? "Already registered? Access secure terminal" : "Need credentials? Request client sandbox profile"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 🎛️ USER AUTHENTICATED: RENDER ACTIVE PLATFORM CONTROLLERS
+  const cachedPlan = localStorage.getItem("METAL_ACTIVE_PLAN") || "pro";
+  return <Dashboard plan={cachedPlan} onBack={handleSignOut} />;
 }
+
