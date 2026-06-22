@@ -350,143 +350,167 @@ function EngineerPanel({ plan }) {
   );
 }
 
-// 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 1
+// 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 1 (FULL PHASE DIAGRAM)
 function IronCarbonCalculations() {
-  const [c, setC] = useState(0.4);
-  const [t, setT] = useState(700);
+  const [c, setC] = useState(0.77);
+  const [t, setT] = useState(723);
 
-  // Lever Rule Thermodynamic Matrix Logic (100% Textbook Exact Values)
+  // Expanded Thermodynamic Phase Field Classifier Matrix
   let phaseText = "";
   let alpha = 0;
   let fe3c = 0;
   let gamma = 0;
+  let liquid = 0;
 
-  if (t <= 723) { // Corrected to exact 723°C
+  // Exact Lever Rule & Phase Region Structural Identification
+  if (t <= 723) {
     const aLim = 0.022;
     const cLim = 6.67;
     const boundedC = Math.max(aLim, Math.min(cLim, c));
     alpha = ((cLim - boundedC) / (cLim - aLim)) * 100;
     fe3c = ((boundedC - aLim) / (cLim - aLim)) * 100;
-    phaseText = boundedC < 0.77 // Corrected to exact 0.77% C
-      ? "Hypoeutectoid Steel: Proeutectoid Ferrite (α) + Pearlite Grains" 
-      : "Hypereutectoid Steel: Primary Cementite (Fe₃C) Networks + Pearlite";
-  } else {
-    if (c <= 0.77) { // Corrected to exact 0.77% C
-      gamma = 100;
-      phaseText = "Fully Austenitized Solid Field (γ-Iron Structural Lattice)";
+    
+    if (c <= 0.77) {
+      phaseText = "Hypoeutectoid Steel: α-Ferrite + Pearlite Matrix";
+    } else if (c <= 2.06) {
+      phaseText = "Hypereutectoid Steel: Pearlite + Secondary Cementite (Fe₃C)";
     } else {
-      gamma = ((6.67 - c) / (6.67 - 0.77)) * 100;
-      fe3c = ((c - 0.77) / (6.67 - 0.77)) * 100;
-      phaseText = "Austenite Matrix (γ) with secondary Cementite precipitation";
+      phaseText = "White Cast Iron: Ledeburite II Structure + Cementite Networks";
+    }
+  } else if (t <= 1147) {
+    if (c <= 0.022) {
+      phaseText = "Stable α-Ferrite Solid Solution Domain";
+    } else if (c <= 0.77) {
+      phaseText = "Two-Phase Field: Proeutectoid α-Ferrite + Austenite (γ)";
+    } else if (c <= 2.06) {
+      phaseText = "Austenite (γ) Matrix + Proeutectoid Cementite Network";
+    } else {
+      // Cast iron eutectic field lever split
+      gamma = ((6.67 - c) / (6.67 - 2.06)) * 100;
+      fe3c = ((c - 2.06) / (6.67 - 2.06)) * 100;
+      phaseText = "Cast Iron Field: Austenite (γ) + Ledeburite I + Fe₃C";
+    }
+  } else {
+    // High temperature liquid boundaries
+    if (c <= 2.06) {
+      phaseText = "Fully Austenitized Solid Solution Field (γ-Matrix)";
+    } else {
+      phaseText = "Liquid Phase (L) + Primary Crystals Precipitation Field";
     }
   }
 
-  // 📈 Cartesian Scaling System for Absolute Chart Alignment
-  // X Axis Bounds: 0.0% to 2.0% Carbon (100-unit grid range)
-  const markerX = ((c - 0.0) / (2.0 - 0.0)) * 100;
-  // Y Axis Bounds: 400°C to 1000°C (60-unit grid height scale)
-  const markerY = ((1000 - t) / (1000 - 400)) * 60;
+  // 📈 TEXTBOOK GEOMETRIC ALIGNMENT MATRIX (0 to 6.67% C, 0 to 1600°C)
+  // Maps values perfectly to the full-scale SVG grid dimensions
+  const markerX = (c / 6.67) * 100;
+  const markerY = 80 - (t / 1600) * 80;
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem" }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Equilibrium Phase Calculator (Lever Rule)</div>
-      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Adjust parameters to dynamically track microstructural component weight fractions.</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Full-Scale Iron-Carbon Phase Diagram Grid</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Comprehensive system tracking steel and cast iron eutectic invariants.</div>
 
-      {/* Inputs Section */}
+      {/* Inputs Configuration Matrix */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: "1.25rem" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
-            <span>Carbon Composition: <strong>{c.toFixed(2)}% C</strong></span>
-            <span style={{ color: S.text3 }}>Max steel limit: 2.0%</span>
+            <span>Carbon Composition: <strong style={{ color: S.steel }}>{c.toFixed(2)} wt% C</strong></span>
+            <span style={{ color: c > 2.06 ? S.goldMid : S.text3, fontSize: 11 }}>{c > 2.06 ? "Cast Iron Field" : "Steel Field"}</span>
           </div>
-          <input type="range" min="0.03" max="2.0" step="0.01" value={c} onChange={(e) => setC(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
+          <input type="range" min="0.00" max="6.67" step="0.01" value={c} onChange={(e) => setC(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
-            <span>Target Temperature: <strong>{t}°C</strong></span>
-            <span style={{ color: t > 723 ? S.gold : "#4caf50", fontSize: 11 }}>{t > 723 ? "Above A1 Eutectoid Line" : "Below A1 Eutectoid Line"}</span>
+            <span>Target Temperature: <strong style={{ color: "#dc3545" }}>{t}°C</strong></span>
+            <span style={{ color: t > 723 ? S.gold : "#4caf50", fontSize: 11 }}>{t > 723 ? `Above A1 Invariant (${t-723}°C)` : "Below A1 Eutectoid line"}</span>
           </div>
-          <input type="range" min="400" max="1000" step="5" value={t} onChange={(e) => setT(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.goldMid }} />
+          <input type="range" min="0" max="1600" step="10" value={t} onChange={(e) => setT(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.goldMid }} />
         </div>
       </div>
 
-      {/* 🎨 HIGH-ACCURACY STRUCTURAL GRID CANVAS */}
-      <div style={{ background: "#f8f9fa", border: "1px solid #e9ecef", borderRadius: 8, padding: "16px 12px 6px 6px", marginBottom: "1.25rem", position: "relative" }}>
-        <div style={{ position: "absolute", top: 6, left: 10, fontSize: 9, fontWeight: 700, color: "#adb5bd", textTransform: "uppercase" }}>Temperature (°C) vs Composition (wt% C)</div>
+      {/* 🎨 THE FULL TEXTBOOK VECTOR PHASE PLOT */}
+      <div style={{ background: "#f8f9fa", border: "1px solid #e9ecef", borderRadius: 8, padding: "20px 14px 8px 8px", marginBottom: "1.25rem", position: "relative" }}>
+        <div style={{ position: "absolute", top: 6, left: 10, fontSize: 9, fontWeight: 700, color: "#adb5bd", textTransform: "uppercase" }}>T [°C] vs Composition (wt% C) Full Range</div>
         
-        <svg viewBox="0 0 100 60" style={{ width: "100%", height: "180px", overflow: "visible", marginTop: 10 }}>
-          {/* A1 Eutectoid Line at Exact 723°C */}
-          {/* Equation: ((1000 - 723) / 600) * 60 = 27.7px down from top */}
-          <line x1="0" y1="27.7" x2="100" y2="27.7" stroke="#6c757d" strokeWidth="0.5" strokeDasharray="1 1" />
-          <text x="2" y="26.5" fontSize="3" fill="#6c757d" fontWeight="bold">A1 invariant: 723°C</text>
-
-          {/* Exact Eutectoid Intersection Tick Line (0.77% C) */}
-          {/* Equation: (0.77 / 2.0) * 100 = 38.5% across */}
-          <line x1="38.5" y1="27.7" x2="38.5" y2="60" stroke="#adb5bd" strokeWidth="0.25" strokeDasharray="1 1" />
-
-          {/* A3 Transformation Curve Boundary Estimation */}
-          <path d="M 0,9 Q 15,22 38.5,27.7" fill="none" stroke="#495057" strokeWidth="0.75" />
+        <svg viewBox="0 0 100 80" style={{ width: "100%", height: "240px", overflow: "visible", marginTop: 10 }}>
+          {/* Axis Labels and Guidelines */}
+          <line x1="0" y1="0" x2="0" y2="80" stroke="#333" strokeWidth="0.5" />
+          <line x1="0" y1="80" x2="100" y2="80" stroke="#333" strokeWidth="0.5" />
           
-          {/* Acm Phase Boundary Slope Line */}
-          <line x1="38.5" y1="27.7" x2="100" y2="0" stroke="#495057" strokeWidth="0.75" />
+          {/* A1 Invariant Line at Exact 723°C */}
+          <line x1="0" y1="43.8" x2="100" y2="43.8" stroke="#6c757d" strokeWidth="0.4" strokeDasharray="1 1" />
+          <text x="1" y="42.5" fontSize="2.5" fill="#212529" fontWeight="bold">A1: 723°C</text>
 
-          {/* Core Phase Fields Label Alignment Matrix */}
-          <text x="18" y="46" fontSize="4.5" fill="#adb5bd" fontWeight="bold" textAnchor="middle">α + Pearlite</text>
-          <text x="70" y="46" fontSize="4.5" fill="#adb5bd" fontWeight="bold" textAnchor="middle">Pearlite + Fe₃C</text>
-          <text x="20" y="16" fontSize="4.5" fill="#6c757d" fontWeight="bold" textAnchor="middle">Austenite (γ)</text>
-          <text x="70" y="20" fontSize="4.5" fill="#6c757d" fontWeight="bold" textAnchor="middle">γ + Fe₃C</text>
+          {/* Eutectic Line at 1147°C (E-C-F Line) */}
+          <line x1="30.9" y1="22.6" x2="100" y2="22.6" stroke="#dc3545" strokeWidth="0.4" strokeDasharray="1 1" />
+          <text x="32" y="21.5" fontSize="2.5" fill="#dc3545" fontWeight="bold">Eutectic: 1147°C</text>
 
-          {/* Precise Eutectoid Intersection Point Spot Marker */}
-          <circle cx="38.5" cy="27.7" r="1" fill="#dc3545" />
+          {/* Core Phase Boundary Lines matching your textbook image */}
+          {/* Liquidus lines tracking from pure melting point 1538°C down through eutectic */}
+          <path d="M 0,3.1 Q 30,10 64.5,22.6" fill="none" stroke="#212529" strokeWidth="0.6" />
+          <line x1="64.5" y1="22.6" x2="100" y2="15.0" stroke="#212529" strokeWidth="0.6" />
 
-          {/* 🎯 THE INTERACTIVE LIVE DYNAMIC CROSSHAIR TRACKER */}
-          <line x1={markerX} y1="0" x2={markerX} y2="60" stroke="rgba(220, 53, 69, 0.25)" strokeWidth="0.5" />
-          <line x1="0" y1={markerY} x2="100" y2={markerY} stroke="rgba(220, 53, 69, 0.25)" strokeWidth="0.5" />
-          <circle cx={markerX} cy={markerY} r="1.8" fill="#dc3545" stroke="#fff" strokeWidth="0.4" />
+          {/* Solidus line defining Austenite boundaries */}
+          <path d="M 0,10.4 Q 15,15 30.9,22.6" fill="none" stroke="#212529" strokeWidth="0.6" />
+          {/* A3 and Acm boundaries */}
+          <path d="M 0,34.5 Q 6,40 11.5,43.8" fill="none" stroke="#212529" strokeWidth="0.6" />
+          <path d="M 11.5,43.8 Q 20,32 30.9,22.6" fill="none" stroke="#212529" strokeWidth="0.6" />
+
+          {/* Phase Field Identifiers Alignment Matrix */}
+          <text x="50" y="8" fontSize="4.5" fill="#495057" textAnchor="middle">liquid (L)</text>
+          <text x="18" y="24" fontSize="4.5" fill="#495057" textAnchor="middle">austenite (γ)</text>
+          <text x="10" y="60" fontSize="3.5" fill="#6c757d" textAnchor="middle">α + pearlite</text>
+          <text x="30" y="60" fontSize="3.5" fill="#6c757d" textAnchor="middle">pearlite + Fe₃C</text>
+          <text x="75" y="40" fontSize="4" fill="#495057" textAnchor="middle">ledeburite + Fe₃C</text>
+
+          {/* Strategic Invariant Intersection Markers */}
+          <circle cx="11.5" cy="43.8" r="0.8" fill="#dc3545" /> {/* Eutectoid point S */}
+          <circle cx="64.5" cy="22.6" r="0.8" fill="#dc3545" /> {/* Eutectic point C */}
+
+          {/* 🎯 ACTIVE GRAPH TRACKING CROSSHAIR CURVE MARKER */}
+          <line x1={markerX} y1="0" x2={markerX} y2="80" stroke="rgba(220, 53, 69, 0.2)" strokeWidth="0.4" />
+          <line x1="0" y1={markerY} x2="100" y2={markerY} stroke="rgba(220, 53, 69, 0.2)" strokeWidth="0.4" />
+          <circle cx={markerX} cy={markerY} r="1.5" fill="#dc3545" stroke="#fff" strokeWidth="0.4" />
         </svg>
 
+        {/* Boundary Limits Ticks Layout */}
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#6c757d", fontWeight: 600, padding: "4px 2px 0 2px", borderTop: "1px solid #dee2e6" }}>
-          <span>0.0% C (Pure α)</span>
-          <span style={{ color: "#dc3545" }}>0.77% C Eutectoid</span>
-          <span>2.0% C (Steel Limit)</span>
+          <span>0.0% C</span>
+          <span>0.77% S'</span>
+          <span>2.06% E</span>
+          <span>4.30% C'</span>
+          <span>6.67% Fe₃C</span>
         </div>
       </div>
 
-      {/* Visual Volume Distribution Bars Area */}
+      {/* Volumetric Calculations Data Block */}
       <div style={{ background: S.bg2, borderRadius: S.radiusMd, padding: 12, display: "flex", flexDirection: "column", gap: 8, marginBottom: 10 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Structural Volumes</div>
+        <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Phase Content Profiles</div>
         {t <= 723 ? (
           <>
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Ferrite (α-Iron Phase)</span><strong>{alpha.toFixed(1)}%</strong></div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Ferrite (α-Iron Proportion)</span><strong>{alpha.toFixed(1)}%</strong></div>
               <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${alpha}%`, height: "100%", background: S.steel }} /></div>
             </div>
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Fe₃C Carbide)</span><strong>{fe3c.toFixed(1)}%</strong></div>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Fe₃C Boundary Carbide)</span><strong>{fe3c.toFixed(1)}%</strong></div>
               <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${fe3c}%`, height: "100%", background: S.goldMid }} /></div>
             </div>
           </>
         ) : (
-          <>
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Austenite (γ-Phase Matrix)</span><strong>{gamma.toFixed(1)}%</strong></div>
-              <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${gamma}%`, height: "100%", background: S.gold }} /></div>
-            </div>
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Boundary Cementite (Fe₃C)</span><strong>{fe3c.toFixed(1)}%</strong></div>
-              <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${fe3c}%`, height: "100%", background: S.text2 }} /></div>
-            </div>
-          </>
+          <div style={{ fontSize: 12, color: S.text }}>
+            Phase concentrations variable depending on local field equilibrium calculations above the eutectoid line.
+          </div>
         )}
       </div>
 
       <div style={{ fontSize: 12, fontStyle: "italic", color: S.steel, textAlign: "center", borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4 }}>
-        💡 Matrix State: <strong>{phaseText}</strong>
+        🔬 Microstructure State: <strong>{phaseText}</strong>
       </div>
     </div>
   );
 }
+
 
 // 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 2 (ELLINGHAM)
 function EllinghamCalculations() {
