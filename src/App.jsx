@@ -1,17 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 
-const SYSTEM = `You are a senior metallurgical and materials engineer with 25+ years of experience, working as a consultant through Metal â€” a professional engineering consultation platform. You provide expert, peer-level advice to engineers and project managers.
+const SYSTEM = `You are a senior metallurgical and materials engineer with 25+ years of experience, working as a consultant through Metal — a professional engineering consultation platform. You provide expert, peer-level advice to engineers and project managers.
 
 Your expertise: material selection, failure analysis, manufacturing and fabrication processes (casting, forging, machining, welding, heat treatment, powder metallurgy), corrosion mechanisms and mitigation, mechanical and physical properties, and industry standards (ASTM, ISO, BS EN, ASME, API, NACE).
 
-Tone: professional, precise, and direct â€” like a trusted colleague. Give specific alloy grades, standard references, and actionable recommendations. Do not use disclaimers. If something is outside your expertise, say so plainly.`;
+Tone: professional, precise, and direct — like a trusted colleague. Give specific alloy grades, standard references, and actionable recommendations. Do not use disclaimers. If something is outside your expertise, say so plainly.`;
 
 const PLANS = [
   {
     id: "free",
     name: "Starter",
     price: "Free",
-    icon: "ðŸª¨",
+    icon: "🪨",
     features: ["5 consultations per month", "Material selection queries", "Basic project brief"],
     locked: ["Failure analysis reports", "Live engineer sessions"],
     popular: false,
@@ -20,7 +20,7 @@ const PLANS = [
     id: "pro",
     name: "Professional",
     price: "$49",
-    icon: "âš™ï¸",
+    icon: "⚙️",
     features: ["Unlimited consultations", "Full material selection", "Failure analysis reports", "Manufacturing process advice"],
     locked: ["Live engineer sessions"],
     popular: true,
@@ -29,7 +29,7 @@ const PLANS = [
     id: "max",
     name: "Max",
     price: "$149",
-    icon: "ðŸ†",
+    icon: "🏆",
     features: ["Everything in Professional", "Priority response", "Detailed PDF reports", "Live sessions with a certified metallurgical engineer", "Dedicated support"],
     locked: [],
     popular: false,
@@ -57,7 +57,7 @@ function renderMarkdown(text) {
       elements.push(<div key={i} style={{fontSize:15,fontWeight:700,color:"#1e2d3d",margin:"16px 0 8px"}}>{line.replace(/^# /,"")}</div>);
     } else if (/^[-*] (.+)/.test(line)) {
       const content = line.replace(/^[-*] /,"").replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>");
-      elements.push(<div key={i} style={{display:"flex",gap:8,margin:"3px 0",fontSize:13,lineHeight:1.6}}><span style={{color:"#d4a017",fontWeight:700,flexShrink:0}}>â€¢</span><span dangerouslySetInnerHTML={{__html:content}}/></div>);
+      elements.push(<div key={i} style={{display:"flex",gap:8,margin:"3px 0",fontSize:13,lineHeight:1.6}}><span style={{color:"#d4a017",fontWeight:700,flexShrink:0}}>•</span><span dangerouslySetInnerHTML={{__html:content}}/></div>);
     } else if (line.trim()==="") {
       elements.push(<div key={i} style={{height:5}}/>);
     } else {
@@ -68,7 +68,7 @@ function renderMarkdown(text) {
   return <div>{elements}</div>;
 }
 
-// â”€â”€ 100% FREE GROQ API ENGINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── 100% FREE GROQ API ENGINE ──────────────────────────────
 async function callGroqFree(messages, systemPrompt) {
   const apiKey = import.meta.env.VITE_GROQ_API_KEY || localStorage.getItem("LOCAL_GROQ_KEY");
 
@@ -100,7 +100,7 @@ async function callGroqFree(messages, systemPrompt) {
   return data.choices[0].message.content || "";
 }
 
-// â”€â”€ Styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Styles ──────────────────────────────────────────────
 const S = {
   steel: "#1e2d3d",
   steelHover: "#162230",
@@ -125,15 +125,15 @@ const card = {
   padding: "1.25rem",
 };
 
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// CHART COMPONENTS â€” accurate SVG-plotted metallurgical diagrams
+// ════════════════════════════════════════════════════════════
+// CHART COMPONENTS — accurate SVG-plotted metallurgical diagrams
 // Each chart receives the SAME values driving the sliders, so the
 // marker shown on the chart always matches the numeric readout.
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ════════════════════════════════════════════════════════════
 
 // ---------- IRON-CARBON PHASE DIAGRAM ----------
-// Key points: Eutectoid 0.77%C/723Â°C Â· Eutectic 4.30%C/1147Â°C
-// Peritectic 0.17%C/1493Â°C Â· A3 at 0%C = 912Â°C Â· Acm from eutectoid to eutectic
+// Key points: Eutectoid 0.77%C/723°C · Eutectic 4.30%C/1147°C
+// Peritectic 0.17%C/1493°C · A3 at 0%C = 912°C · Acm from eutectoid to eutectic
 const IC_X_MIN = 0.01, IC_X_MAX = 6.67;
 const IC_PLOT_X0 = 70, IC_PLOT_X1 = 610;
 function icXToPx(c) {
@@ -176,7 +176,7 @@ function IronCarbonChart({ carbon, temp }) {
       {tGrid.map((t) => (
         <g key={t}>
           <line x1={IC_PLOT_X0} y1={icTToPx(t)} x2={IC_PLOT_X1} y2={icTToPx(t)} stroke={S.border} strokeWidth="0.5" strokeDasharray={t === 723 || t === 1147 || t === 1493 ? "0" : "3,3"} />
-          <text x={IC_PLOT_X0 - 8} y={icTToPx(t)} fontSize="10" fill={S.text2} textAnchor="end" dominantBaseline="central">{t}Â°C</text>
+          <text x={IC_PLOT_X0 - 8} y={icTToPx(t)} fontSize="10" fill={S.text2} textAnchor="end" dominantBaseline="central">{t}°C</text>
         </g>
       ))}
       {cGrid.map((c) => (
@@ -203,20 +203,20 @@ function IronCarbonChart({ carbon, temp }) {
         <circle key={i} cx={icXToPx(p.c)} cy={icTToPx(p.t)} r="3" fill="#b23b3b" />
       ))}
 
-      <text x={icXToPx(0.15)} y={icTToPx(1100)} fontSize="11" fill={S.steel} textAnchor="middle">Î³</text>
-      <text x={icXToPx(0.05)} y={icTToPx(800)} fontSize="10" fill={S.steel} textAnchor="middle">Î±+Î³</text>
-      <text x={icXToPx(0.3)} y={icTToPx(650)} fontSize="11" fill={S.steel} textAnchor="middle">Î±+Feâ‚ƒC</text>
-      <text x={icXToPx(0.02)} y={icTToPx(450)} fontSize="10" fill={S.steel} textAnchor="middle">Î±</text>
-      <text x={icXToPx(1.5)} y={icTToPx(950)} fontSize="11" fill={S.steel} textAnchor="middle">Î³+Feâ‚ƒC</text>
-      <text x={icXToPx(0.02)} y={icTToPx(1480)} fontSize="9" fill={S.text2} textAnchor="middle">Î´</text>
+      <text x={icXToPx(0.15)} y={icTToPx(1100)} fontSize="11" fill={S.steel} textAnchor="middle">γ</text>
+      <text x={icXToPx(0.05)} y={icTToPx(800)} fontSize="10" fill={S.steel} textAnchor="middle">α+γ</text>
+      <text x={icXToPx(0.3)} y={icTToPx(650)} fontSize="11" fill={S.steel} textAnchor="middle">α+Fe₃C</text>
+      <text x={icXToPx(0.02)} y={icTToPx(450)} fontSize="10" fill={S.steel} textAnchor="middle">α</text>
+      <text x={icXToPx(1.5)} y={icTToPx(950)} fontSize="11" fill={S.steel} textAnchor="middle">γ+Fe₃C</text>
+      <text x={icXToPx(0.02)} y={icTToPx(1480)} fontSize="9" fill={S.text2} textAnchor="middle">δ</text>
       <text x={icXToPx(0.4)} y={icTToPx(1560)} fontSize="9" fill={S.text2} textAnchor="middle">Liquid</text>
-      <text x={icXToPx(5.3)} y={icTToPx(1000)} fontSize="10" fill={S.text2} textAnchor="middle">Feâ‚ƒC+Ledeburite</text>
-      <text x={icXToPx(0.77)} y={icTToPx(723) - 10} fontSize="9.5" fill="#b23b3b" textAnchor="middle" fontWeight="700">Eutectoid 0.77%/723Â°C</text>
-      <text x={icXToPx(4.3)} y={icTToPx(1147) - 10} fontSize="9.5" fill="#b23b3b" textAnchor="middle" fontWeight="700">Eutectic 4.3%/1147Â°C</text>
-      <text x={icXToPx(0.17)} y={icTToPx(1493) - 10} fontSize="9" fill="#b23b3b" textAnchor="middle" fontWeight="700">Peritectic 0.17%/1493Â°C</text>
+      <text x={icXToPx(5.3)} y={icTToPx(1000)} fontSize="10" fill={S.text2} textAnchor="middle">Fe₃C+Ledeburite</text>
+      <text x={icXToPx(0.77)} y={icTToPx(723) - 10} fontSize="9.5" fill="#b23b3b" textAnchor="middle" fontWeight="700">Eutectoid 0.77%/723°C</text>
+      <text x={icXToPx(4.3)} y={icTToPx(1147) - 10} fontSize="9.5" fill="#b23b3b" textAnchor="middle" fontWeight="700">Eutectic 4.3%/1147°C</text>
+      <text x={icXToPx(0.17)} y={icTToPx(1493) - 10} fontSize="9" fill="#b23b3b" textAnchor="middle" fontWeight="700">Peritectic 0.17%/1493°C</text>
 
       <text x={(IC_PLOT_X0 + IC_PLOT_X1) / 2} y={500} fontSize="11" fill={S.text2} textAnchor="middle">Carbon content (wt% C, log scale)</text>
-      <text x={18} y={(IC_PLOT_Y0 + IC_PLOT_Y1) / 2} fontSize="11" fill={S.text2} textAnchor="middle" transform={`rotate(-90 18 ${(IC_PLOT_Y0 + IC_PLOT_Y1) / 2})`}>Temperature (Â°C)</text>
+      <text x={18} y={(IC_PLOT_Y0 + IC_PLOT_Y1) / 2} fontSize="11" fill={S.text2} textAnchor="middle" transform={`rotate(-90 18 ${(IC_PLOT_Y0 + IC_PLOT_Y1) / 2})`}>Temperature (°C)</text>
 
       <line x1={markerX} y1={IC_PLOT_Y0} x2={markerX} y2={markerY} stroke={S.goldMid} strokeWidth="1" strokeDasharray="4,3" opacity="0.6" />
       <line x1={IC_PLOT_X0} y1={markerY} x2={markerX} y2={markerY} stroke={S.goldMid} strokeWidth="1" strokeDasharray="4,3" opacity="0.6" />
@@ -233,9 +233,9 @@ const EL_G_MIN = -1300, EL_G_MAX = -100;
 function elXToPx(tC) { return EL_PLOT_X0 + ((tC - EL_T_MIN) / (EL_T_MAX - EL_T_MIN)) * (EL_PLOT_X1 - EL_PLOT_X0); }
 function elYToPx(g) { return EL_PLOT_Y1 - ((g - EL_G_MIN) / (EL_G_MAX - EL_G_MIN)) * (EL_PLOT_Y1 - EL_PLOT_Y0); }
 const EL_LINES = {
-  Cu: { name: "Cu/Cuâ‚‚O", dH: -338, dS: -0.14, color: "#d4a017" },
+  Cu: { name: "Cu/Cu₂O", dH: -338, dS: -0.14, color: "#d4a017" },
   Fe: { name: "Fe/FeO", dH: -544, dS: -0.13, color: S.steel },
-  Al: { name: "Al/Alâ‚‚Oâ‚ƒ", dH: -1117, dS: -0.21, color: "#7f3fa0" },
+  Al: { name: "Al/Al₂O₃", dH: -1117, dS: -0.21, color: "#7f3fa0" },
 };
 const EL_CO_LINE = { dH: -565, dS: 0.17 };
 function elGAt(line, tC) { return line.dH - (tC + 273.15) * line.dS; }
@@ -252,7 +252,7 @@ function EllinghamChart({ metal, temp }) {
       {tGrid.map((t) => (
         <g key={t}>
           <line x1={elXToPx(t)} y1={EL_PLOT_Y0} x2={elXToPx(t)} y2={EL_PLOT_Y1} stroke={S.border} strokeWidth="0.5" strokeDasharray="3,3" />
-          <text x={elXToPx(t)} y={EL_PLOT_Y1 + 16} fontSize="10" fill={S.text2} textAnchor="middle">{t}Â°</text>
+          <text x={elXToPx(t)} y={EL_PLOT_Y1 + 16} fontSize="10" fill={S.text2} textAnchor="middle">{t}°</text>
         </g>
       ))}
       {[-200, -400, -600, -800, -1000, -1200].map((g) => (
@@ -272,9 +272,9 @@ function EllinghamChart({ metal, temp }) {
         );
       })}
       <line x1={EL_PLOT_X0} y1={elYToPx(elGAt(EL_CO_LINE, EL_T_MIN))} x2={EL_PLOT_X1} y2={elYToPx(elGAt(EL_CO_LINE, EL_T_MAX))} stroke="#999" strokeWidth="1.3" strokeDasharray="5,3" />
-      <text x={EL_PLOT_X1 + 4} y={elYToPx(elGAt(EL_CO_LINE, EL_T_MAX))} fontSize="9.5" fill="#999" dominantBaseline="central">2CO+Oâ‚‚â†’2COâ‚‚</text>
-      <text x={(EL_PLOT_X0 + EL_PLOT_X1) / 2} y={405} fontSize="11" fill={S.text2} textAnchor="middle">Temperature (Â°C)</text>
-      <text x={18} y={(EL_PLOT_Y0 + EL_PLOT_Y1) / 2} fontSize="11" fill={S.text2} textAnchor="middle" transform={`rotate(-90 18 ${(EL_PLOT_Y0 + EL_PLOT_Y1) / 2})`}>Î”GÂ° (kJ/mol Oâ‚‚)</text>
+      <text x={EL_PLOT_X1 + 4} y={elYToPx(elGAt(EL_CO_LINE, EL_T_MAX))} fontSize="9.5" fill="#999" dominantBaseline="central">2CO+O₂→2CO₂</text>
+      <text x={(EL_PLOT_X0 + EL_PLOT_X1) / 2} y={405} fontSize="11" fill={S.text2} textAnchor="middle">Temperature (°C)</text>
+      <text x={18} y={(EL_PLOT_Y0 + EL_PLOT_Y1) / 2} fontSize="11" fill={S.text2} textAnchor="middle" transform={`rotate(-90 18 ${(EL_PLOT_Y0 + EL_PLOT_Y1) / 2})`}>ΔG° (kJ/mol O₂)</text>
       <line x1={markerX} y1={EL_PLOT_Y0} x2={markerX} y2={markerY} stroke="#b23b3b" strokeWidth="1" strokeDasharray="4,3" opacity="0.6" />
       <line x1={EL_PLOT_X0} y1={markerY} x2={markerX} y2={markerY} stroke="#b23b3b" strokeWidth="1" strokeDasharray="4,3" opacity="0.6" />
       <circle cx={markerX} cy={markerY} r="7" fill="#fff" stroke="#b23b3b" strokeWidth="2.5" />
@@ -328,11 +328,11 @@ function TttCctChart({ alloy, coolingMedia }) {
       {tGrid.map((t) => (
         <g key={t}>
           <line x1={TC_PLOT_X0} y1={tcYToPx(t)} x2={TC_PLOT_X1} y2={tcYToPx(t)} stroke={S.border} strokeWidth="0.5" strokeDasharray={t === 723 ? "0" : "3,3"} />
-          <text x={TC_PLOT_X0 - 8} y={tcYToPx(t)} fontSize="10" fill={S.text2} textAnchor="end" dominantBaseline="central">{t}Â°</text>
+          <text x={TC_PLOT_X0 - 8} y={tcYToPx(t)} fontSize="10" fill={S.text2} textAnchor="end" dominantBaseline="central">{t}°</text>
         </g>
       ))}
       <line x1={TC_PLOT_X0} y1={tcYToPx(723)} x2={TC_PLOT_X1} y2={tcYToPx(723)} stroke={S.gold} strokeWidth="1.3" />
-      <text x={TC_PLOT_X0 + 4} y={tcYToPx(723) - 6} fontSize="9.5" fill={S.gold}>A1 = 723Â°C</text>
+      <text x={TC_PLOT_X0 + 4} y={tcYToPx(723) - 6} fontSize="9.5" fill={S.gold}>A1 = 723°C</text>
       <path d={tcPathFromList(data.pearliteStart)} fill="none" stroke={S.steel} strokeWidth="1.5" />
       <text x={tcXToPx(2.2)} y={tcYToPx(560) - 8} fontSize="9.5" fill={S.steel}>Ps (start)</text>
       {data.pearliteFinish && (
@@ -348,11 +348,11 @@ function TttCctChart({ alloy, coolingMedia }) {
         </>
       )}
       <line x1={TC_PLOT_X0} y1={tcYToPx(data.Ms)} x2={TC_PLOT_X1} y2={tcYToPx(data.Ms)} stroke="#b23b3b" strokeWidth="1" strokeDasharray="4,3" />
-      <text x={TC_PLOT_X0 + 4} y={tcYToPx(data.Ms) - 6} fontSize="9.5" fill="#b23b3b">Ms = {data.Ms}Â°C</text>
+      <text x={TC_PLOT_X0 + 4} y={tcYToPx(data.Ms) - 6} fontSize="9.5" fill="#b23b3b">Ms = {data.Ms}°C</text>
       <line x1={TC_PLOT_X0} y1={tcYToPx(data.Mf)} x2={TC_PLOT_X1} y2={tcYToPx(data.Mf)} stroke="#b23b3b" strokeWidth="1" strokeDasharray="4,3" opacity="0.6" />
-      <text x={TC_PLOT_X0 + 4} y={tcYToPx(data.Mf) - 6} fontSize="9.5" fill="#b23b3b" opacity="0.7">Mf = {data.Mf}Â°C</text>
+      <text x={TC_PLOT_X0 + 4} y={tcYToPx(data.Mf) - 6} fontSize="9.5" fill="#b23b3b" opacity="0.7">Mf = {data.Mf}°C</text>
       <text x={(TC_PLOT_X0 + TC_PLOT_X1) / 2} y={405} fontSize="11" fill={S.text2} textAnchor="middle">Time, seconds (log scale)</text>
-      <text x={18} y={(TC_PLOT_Y0 + TC_PLOT_Y1) / 2} fontSize="11" fill={S.text2} textAnchor="middle" transform={`rotate(-90 18 ${(TC_PLOT_Y0 + TC_PLOT_Y1) / 2})`}>Temperature (Â°C)</text>
+      <text x={18} y={(TC_PLOT_Y0 + TC_PLOT_Y1) / 2} fontSize="11" fill={S.text2} textAnchor="middle" transform={`rotate(-90 18 ${(TC_PLOT_Y0 + TC_PLOT_Y1) / 2})`}>Temperature (°C)</text>
       <path d={tcPathFromList(path)} fill="none" stroke="#2980b9" strokeWidth="2.5" />
       {path.map((p, i) => (
         <circle key={i} cx={tcXToPx(p[1])} cy={tcYToPx(p[0])} r={i === path.length - 1 ? 6 : 2.5} fill={i === path.length - 1 ? "#fff" : "#2980b9"} stroke="#2980b9" strokeWidth={i === path.length - 1 ? 2.5 : 0} />
@@ -476,9 +476,9 @@ function PourbaixChart({ metal, ph, potential }) {
         </g>
       ))}
       <line x1={PB_PLOT_X0} y1={pbYToPx(1.23)} x2={PB_PLOT_X1} y2={pbYToPx(1.23)} stroke="#999" strokeWidth="1" strokeDasharray="5,3" />
-      <text x={PB_PLOT_X1 - 4} y={pbYToPx(1.23) - 5} fontSize="9" fill="#999" textAnchor="end">Oâ‚‚ evolution</text>
+      <text x={PB_PLOT_X1 - 4} y={pbYToPx(1.23) - 5} fontSize="9" fill="#999" textAnchor="end">O₂ evolution</text>
       <line x1={PB_PLOT_X0} y1={pbYToPx(0)} x2={PB_PLOT_X1} y2={pbYToPx(0)} stroke="#999" strokeWidth="1" strokeDasharray="5,3" />
-      <text x={PB_PLOT_X1 - 4} y={pbYToPx(0) - 5} fontSize="9" fill="#999" textAnchor="end">Hâ‚‚ evolution</text>
+      <text x={PB_PLOT_X1 - 4} y={pbYToPx(0) - 5} fontSize="9" fill="#999" textAnchor="end">H₂ evolution</text>
       <rect
         x={pbXToPx(passivBox.x0)}
         y={pbYToPx(passivBox.yTop)}
@@ -565,7 +565,7 @@ function JominyChart({ j1, j4, j8, j16 }) {
   );
 }
 
-// â”€â”€ Landing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Landing ──────────────────────────────────────────────
 function Landing({ onSelect }) {
   return (
     <div style={{ fontFamily: "system-ui, sans-serif", padding: "1.5rem 1rem", maxWidth: 700, margin: "0 auto" }}>
@@ -574,7 +574,7 @@ function Landing({ onSelect }) {
           width: 56, height: 56, borderRadius: 14, background: S.steel,
           display: "flex", alignItems: "center", justifyContent: "center",
           margin: "0 auto 1rem", fontSize: 26,
-        }}>ðŸ”©</div>
+        }}>🔩</div>
         <div style={{ fontSize: 30, fontWeight: 600, color: S.text, letterSpacing: -0.5 }}>Metal</div>
         <div style={{ fontSize: 14, color: S.text2, marginTop: 4 }}>
           Professional Metallurgical &amp; Materials Engineering Consultation
@@ -604,12 +604,12 @@ function Landing({ onSelect }) {
             <ul style={{ listStyle: "none", padding: 0, margin: 0, fontSize: 12, color: S.text2, flex: 1 }}>
               {p.features.map((f) => (
                 <li key={f} style={{ display: "flex", gap: 6, marginBottom: 6, alignItems: "flex-start" }}>
-                  <span style={{ color: S.goldMid, fontWeight: 700, flexShrink: 0 }}>âœ“</span>{f}
+                  <span style={{ color: S.goldMid, fontWeight: 700, flexShrink: 0 }}>✓</span>{f}
                 </li>
               ))}
               {p.locked.map((f) => (
                 <li key={f} style={{ display: "flex", gap: 6, marginBottom: 6, alignItems: "flex-start", opacity: 0.4 }}>
-                  <span style={{ flexShrink: 0 }}>âœ•</span>{f}
+                  <span style={{ flexShrink: 0 }}>✕</span>{f}
                 </li>
               ))}
             </ul>
@@ -633,10 +633,10 @@ function Landing({ onSelect }) {
   );
 }
 
-// â”€â”€ Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Chat ─────────────────────────────────────────────────
 function Chat() {
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Welcome to Metal. I'm your dedicated materials engineering consultant. Whether you need help with material selection, failure analysis, manufacturing processes, corrosion assessment, or heat treatment â€” describe your challenge and I'll provide expert guidance backed by industry standards." },
+    { role: "assistant", content: "Welcome to Metal. I'm your dedicated materials engineering consultant. Whether you need help with material selection, failure analysis, manufacturing processes, corrosion assessment, or heat treatment — describe your challenge and I'll provide expert guidance backed by industry standards." },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -672,13 +672,13 @@ function Chat() {
       <div ref={listRef} style={{ height: 320, overflowY: "auto", padding: "1rem", display: "flex", flexDirection: "column", gap: 10 }}>
         {messages.map((m, i) => (
           <div key={i} style={{ display: "flex", gap: 8, flexDirection: m.role === "user" ? "row-reverse" : "row", alignItems: "flex-start" }}>
-            <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, background: m.role === "user" ? S.bg2 : S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{m.role === "user" ? "ðŸ‘¤" : "ðŸ”©"}</div>
+            <div style={{ width: 30, height: 30, borderRadius: "50%", flexShrink: 0, background: m.role === "user" ? S.bg2 : S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>{m.role === "user" ? "👤" : "🔩"}</div>
             <div style={{ maxWidth: "76%", padding: "8px 12px", borderRadius: 12, fontSize: 13, lineHeight: 1.6, background: m.role === "user" ? S.steel : S.bg2, color: m.role === "user" ? "#fff" : S.text, border: m.role === "user" ? "none" : `0.5px solid ${S.border}` }}>{m.role === "user" ? m.content : renderMarkdown(m.content)}</div>
           </div>
         ))}
         {loading && (
           <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
-            <div style={{ width: 30, height: 30, borderRadius: "50%", background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>ðŸ”©</div>
+            <div style={{ width: 30, height: 30, borderRadius: "50%", background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14 }}>🔩</div>
             <div style={{ padding: "10px 14px", borderRadius: 12, background: S.bg2, border: `0.5px solid ${S.border}`, display: "flex", gap: 5, alignItems: "center" }}>
               {[0, 1, 2].map((i) => (
                 <div key={i} style={{ width: 6, height: 6, borderRadius: "50%", background: S.steel, animation: "blink 1.2s infinite", animationDelay: `${i * 0.2}s` }} />
@@ -689,7 +689,7 @@ function Chat() {
         {error && <div style={{ fontSize: 12, color: "#c0392b", padding: "6px 10px", background: "#fdf0ef", borderRadius: S.radiusMd }}>{error}</div>}
       </div>
       <div style={{ display: "flex", gap: 8, padding: 10, borderTop: `0.5px solid ${S.border}` }}>
-        <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Describe your materials engineering challengeâ€¦" style={{ flex: 1, padding: "8px 12px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13, outline: "none", background: S.bg }} />
+        <input value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Describe your materials engineering challenge…" style={{ flex: 1, padding: "8px 12px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13, outline: "none", background: S.bg }} />
         <button onClick={send} disabled={loading || !input.trim()} style={{ padding: "0 16px", background: loading ? S.text3 : S.steel, color: "#fff", border: "none", borderRadius: S.radiusMd, fontSize: 13, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}>Send</button>
       </div>
       <style>{`@keyframes blink { 0%,80%,100%{opacity:.2} 40%{opacity:1} }`}</style>
@@ -711,7 +711,7 @@ function Brief() {
 - Industry: ${form.industry}
 - Scope: ${form.scope}
 - Component/application: ${form.component}
-- Operating temperature: ${form.temp || "not stated"}Â°C
+- Operating temperature: ${form.temp || "not stated"}°C
 - Loading & environment: ${form.load || "not stated"}
 - Standards & constraints: ${form.notes || "none stated"}
 
@@ -736,12 +736,12 @@ Provide a structured engineering assessment: executive summary, recommended mate
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
         {field("Industry / sector", sel("industry", ["Aerospace", "Oil & Gas", "Automotive", "Construction", "Marine", "Power generation", "Medical devices", "Other"]))}
         {field("Scope of assessment", sel("scope", ["Material selection", "Failure analysis", "Manufacturing process", "Corrosion assessment", "Heat treatment", "Welding & joining"]))}
-        <div style={{ gridColumn: "1/-1" }}>{field("Component / application", inp("component", "e.g. Pressure vessel in Hâ‚‚S environment at 250Â°C"))}</div>
-        {field("Operating temperature (Â°C)", inp("temp", "e.g. 250"))}
+        <div style={{ gridColumn: "1/-1" }}>{field("Component / application", inp("component", "e.g. Pressure vessel in H₂S environment at 250°C"))}</div>
+        {field("Operating temperature (°C)", inp("temp", "e.g. 250"))}
         {field("Loading & environment", inp("load", "e.g. cyclic fatigue, saline"))}
-        <div style={{ gridColumn: "1/-1" }}>{field("Standards & constraints", <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Applicable standards (ASME, API, ASTMâ€¦), weight limits, budget, existing materialsâ€¦" style={{ padding: "8px 10px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13, resize: "vertical", minHeight: 70 }} />)}</div>
+        <div style={{ gridColumn: "1/-1" }}>{field("Standards & constraints", <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} placeholder="Applicable standards (ASME, API, ASTM…), weight limits, budget, existing materials…" style={{ padding: "8px 10px", borderRadius: S.radiusMd, border: `0.5px solid ${S.border2}`, fontSize: 13, resize: "vertical", minHeight: 70 }} />)}</div>
       </div>
-      <button onClick={submit} disabled={loading} style={{ width: "100%", padding: 10, background: loading ? S.text3 : S.steel, color: "#fff", border: "none", borderRadius: S.radiusMd, fontSize: 14, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}>{loading ? "Generating assessmentâ€¦" : "Generate engineering assessment"}</button>
+      <button onClick={submit} disabled={loading} style={{ width: "100%", padding: 10, background: loading ? S.text3 : S.steel, color: "#fff", border: "none", borderRadius: S.radiusMd, fontSize: 14, fontWeight: 600, cursor: loading ? "not-allowed" : "pointer" }}>{loading ? "Generating assessment…" : "Generate engineering assessment"}</button>
       {error && <div style={{ marginTop: 10, fontSize: 13, color: "#c0392b", padding: "8px 12px", background: "#fdf0ef", borderRadius: S.radiusMd }}>{error}</div>}
       {result && (<div style={{ marginTop: 14, background: S.bg2, border: `0.5px solid ${S.border2}`, borderRadius: S.radius, padding: "1rem 1.25rem" }}><div style={{ fontSize: 11, fontWeight: 600, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 8 }}>Engineering assessment</div><div style={{ fontSize: 13, color: S.text, lineHeight: 1.7 }}>{renderMarkdown(result)}</div></div>)}
     </div>
@@ -754,7 +754,7 @@ function EngineerPanel({ plan }) {
 
   if (plan !== "max") return (
     <div style={{ ...card, textAlign: "center", padding: "2rem" }}>
-      <div style={{ fontSize: 36, marginBottom: 10 }}>ðŸ”’</div>
+      <div style={{ fontSize: 36, marginBottom: 10 }}>🔒</div>
       <div style={{ fontSize: 16, fontWeight: 600, color: S.text, marginBottom: 6 }}>Available on Max plan</div>
       <div style={{ fontSize: 13, color: S.text2, lineHeight: 1.6, marginBottom: "1.25rem", maxWidth: 360, margin: "0 auto 1.25rem" }}>Book a live one-on-one session with a certified metallurgical engineer. Get an in-depth review of your project, failure investigation support, or a professional second opinion.</div>
     </div>
@@ -763,10 +763,10 @@ function EngineerPanel({ plan }) {
   return (
     <div style={{ ...card, padding: 0, overflow: "hidden" }}>
       <div style={{ background: S.steel, padding: "1rem 1.25rem", display: "flex", alignItems: "center", gap: 14 }}>
-        <div style={{ width: 50, height: 50, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>ðŸ‘¨â€ðŸ”¬</div>
+        <div style={{ width: 50, height: 50, borderRadius: "50%", background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>👨‍🔬</div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>Dr. Adewale Okafor, FIMMM</div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>PhD Materials Science Â· 22 yrs experience Â· CEng</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>PhD Materials Science · 22 yrs experience · CEng</div>
         </div>
         <div style={{ width: 9, height: 9, borderRadius: "50%", background: "#4caf50", flexShrink: 0 }} />
       </div>
@@ -782,13 +782,13 @@ function EngineerPanel({ plan }) {
           ))}
         </div>
         <button onClick={() => { if (selected === null) { alert("Please select a time slot."); return; } setConfirmed(true); }} style={{ width: "100%", padding: 10, background: S.goldMid, color: "#fff", border: "none", borderRadius: S.radiusMd, fontSize: 14, fontWeight: 600, cursor: "pointer" }}>Confirm booking</button>
-        {confirmed && (<div style={{ marginTop: 10, background: S.goldLight, border: `0.5px solid #e8d5a3`, borderRadius: S.radiusMd, padding: "10px 14px", fontSize: 13, color: S.text, textAlign: "center" }}>ðŸŽ‰ Session reserved for <strong>{SLOTS[selected].day} at {SLOTS[selected].time}</strong>. An email invitation has been generated.</div>)}
+        {confirmed && (<div style={{ marginTop: 10, background: S.goldLight, border: `0.5px solid #e8d5a3`, borderRadius: S.radiusMd, padding: "10px 14px", fontSize: 13, color: S.text, textAlign: "center" }}>🎉 Session reserved for <strong>{SLOTS[selected].day} at {SLOTS[selected].time}</strong>. An email invitation has been generated.</div>)}
       </div>
     </div>
   );
 }
 
-// ðŸ—ºï¸ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 1 â€” IRON-CARBON
+// 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 1 — IRON-CARBON
 function IronCarbonCalculations() {
   const [c, setC] = useState(0.4);
   const [t, setT] = useState(700);
@@ -805,31 +805,31 @@ function IronCarbonCalculations() {
     alpha = ((cLim - boundedC) / (cLim - aLim)) * 100;
     fe3c = ((boundedC - aLim) / (cLim - aLim)) * 100;
     phaseText = boundedC < 0.77
-      ? "Hypoeutectoid Steel: Proeutectoid Ferrite (Î±) + Pearlite Grains"
+      ? "Hypoeutectoid Steel: Proeutectoid Ferrite (α) + Pearlite Grains"
       : boundedC === 0.77 ? "Eutectoid Steel: 100% Pearlite"
-      : "Hypereutectoid Steel: Primary Cementite (Feâ‚ƒC) Networks + Pearlite";
+      : "Hypereutectoid Steel: Primary Cementite (Fe₃C) Networks + Pearlite";
   } else if (t <= 1147) {
     if (c <= 0.77) {
       gamma = 100;
-      phaseText = "Fully Austenitized Solid Field (Î³-Iron Structural Lattice)";
+      phaseText = "Fully Austenitized Solid Field (γ-Iron Structural Lattice)";
     } else if (c <= 2.11) {
       gamma = ((2.11 - c) / (2.11 - 0.77)) * 100;
       fe3c = 100 - gamma;
-      phaseText = "Austenite Matrix (Î³) with secondary Cementite precipitation";
+      phaseText = "Austenite Matrix (γ) with secondary Cementite precipitation";
     } else {
       phaseText = c < 4.30
-        ? "Hypoeutectic Cast Iron: Austenite (Î³) + Ledeburite"
+        ? "Hypoeutectic Cast Iron: Austenite (γ) + Ledeburite"
         : c === 4.30 ? "Eutectic Cast Iron: 100% Ledeburite"
         : "Hypereutectic Cast Iron: Primary Cementite + Ledeburite";
     }
   } else {
-    phaseText = c < 0.53 ? "Liquid + Î´-Ferrite / Austenite region" : "Liquid + Austenite region";
+    phaseText = c < 0.53 ? "Liquid + δ-Ferrite / Austenite region" : "Liquid + Austenite region";
   }
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem" }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>ðŸ“Š Iron-Carbon Phase Diagram (Lever Rule)</div>
-      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Full equilibrium diagram, 0â€“6.67% C. Adjust sliders â€” the marker below moves live on the real diagram.</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Iron-Carbon Phase Diagram (Lever Rule)</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Full equilibrium diagram, 0–6.67% C. Adjust sliders — the marker below moves live on the real diagram.</div>
 
       <div style={{ marginBottom: "1.25rem", borderRadius: S.radiusMd, overflow: "hidden", border: `1px solid ${S.border}` }}>
         <IronCarbonChart carbon={c} temp={t} />
@@ -839,15 +839,15 @@ function IronCarbonCalculations() {
         <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
             <span>Carbon Composition: <strong>{c.toFixed(2)}% C</strong></span>
-            <span style={{ color: S.text3 }}>Full range: 0.01â€“6.67%</span>
+            <span style={{ color: S.text3 }}>Full range: 0.01–6.67%</span>
           </div>
           <input type="range" min="0.01" max="6.67" step="0.01" value={c} onChange={(e) => setC(parseFloat(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
-            <span>Target Temperature: <strong>{t}Â°C</strong></span>
-            <span style={{ color: t > 723 ? S.gold : "#4caf50", fontSize: 11 }}>{t > 723 ? "Above A1 (723Â°C)" : "Below A1 (723Â°C)"}</span>
+            <span>Target Temperature: <strong>{t}°C</strong></span>
+            <span style={{ color: t > 723 ? S.gold : "#4caf50", fontSize: 11 }}>{t > 723 ? "Above A1 (723°C)" : "Below A1 (723°C)"}</span>
           </div>
           <input type="range" min="300" max="1600" step="5" value={t} onChange={(e) => setT(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.goldMid }} />
         </div>
@@ -859,22 +859,22 @@ function IronCarbonCalculations() {
           {t <= 723 ? (
             <>
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Ferrite (Î±-Iron Phase)</span><strong>{alpha.toFixed(1)}%</strong></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Ferrite (α-Iron Phase)</span><strong>{alpha.toFixed(1)}%</strong></div>
                 <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${alpha}%`, height: "100%", background: S.steel }} /></div>
               </div>
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Feâ‚ƒC Carbide)</span><strong>{fe3c.toFixed(1)}%</strong></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Fe₃C Carbide)</span><strong>{fe3c.toFixed(1)}%</strong></div>
                 <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${fe3c}%`, height: "100%", background: S.goldMid }} /></div>
               </div>
             </>
           ) : (
             <>
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Austenite (Î³-Phase Matrix)</span><strong>{gamma.toFixed(1)}%</strong></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Austenite (γ-Phase Matrix)</span><strong>{gamma.toFixed(1)}%</strong></div>
                 <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${gamma}%`, height: "100%", background: S.gold }} /></div>
               </div>
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Feâ‚ƒC)</span><strong>{fe3c.toFixed(1)}%</strong></div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}><span>Cementite (Fe₃C)</span><strong>{fe3c.toFixed(1)}%</strong></div>
                 <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}><div style={{ width: `${fe3c}%`, height: "100%", background: S.text2 }} /></div>
               </div>
             </>
@@ -883,13 +883,13 @@ function IronCarbonCalculations() {
       )}
 
       <div style={{ fontSize: 12, fontStyle: "italic", color: S.steel, textAlign: "center", borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4 }}>
-        ðŸ’¡ Matrix State: <strong>{phaseText}</strong>
+        💡 Matrix State: <strong>{phaseText}</strong>
       </div>
     </div>
   );
 }
 
-// ðŸ—ºï¸ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 2 (ELLINGHAM)
+// 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 2 (ELLINGHAM)
 function EllinghamCalculations() {
   const [metal, setMetal] = useState("Fe");
   const [temp, setTemp] = useState(800);
@@ -907,8 +907,8 @@ function EllinghamCalculations() {
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>ðŸ“Š Ellingham Diagram & Reduction Predictor</div>
-      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Real Î”GÂ° vs T lines for each oxide system. The marker tracks your selected metal and temperature.</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Ellingham Diagram & Reduction Predictor</div>
+      <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Real ΔG° vs T lines for each oxide system. The marker tracks your selected metal and temperature.</div>
 
       <div style={{ marginBottom: "1.25rem", borderRadius: S.radiusMd, overflow: "hidden", border: `1px solid ${S.border}` }}>
         <EllinghamChart metal={metal} temp={temp} />
@@ -926,7 +926,7 @@ function EllinghamCalculations() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
-            <span>Furnace Heat: <strong>{temp}Â°C</strong></span>
+            <span>Furnace Heat: <strong>{temp}°C</strong></span>
           </div>
           <input type="range" min="0" max="1600" step="10" value={temp} onChange={(e) => setTemp(parseInt(e.target.value))} style={{ width: "100%", accentColor: S.steel }} />
         </div>
@@ -936,29 +936,29 @@ function EllinghamCalculations() {
         <div style={{ fontSize: 10, fontWeight: 700, color: S.text2, textTransform: "uppercase", letterSpacing: 0.5 }}>Calculated Thermodynamic Potentials</div>
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
-            <span>Î”GÂ° of {values.name}:</span>
-            <strong style={{ color: deltaG < -600 ? "#c0392b" : S.steel }}>{deltaG.toFixed(0)} kJ/mol Oâ‚‚</strong>
+            <span>ΔG° of {values.name}:</span>
+            <strong style={{ color: deltaG < -600 ? "#c0392b" : S.steel }}>{deltaG.toFixed(0)} kJ/mol O₂</strong>
           </div>
           <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}>
             <div style={{ width: `${Math.min(100, (Math.abs(deltaG) / 1200) * 100)}%`, height: "100%", background: "#2c3e50" }} />
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, borderTop: `0.5px solid ${S.border}`, paddingTop: 6, marginTop: 2 }}>
-          <span>Carbon Reduction Potential (2CO â†’ 2COâ‚‚):</span>
-          <strong>{deltaG_CO.toFixed(0)} kJ/mol Oâ‚‚</strong>
+          <span>Carbon Reduction Potential (2CO → 2CO₂):</span>
+          <strong>{deltaG_CO.toFixed(0)} kJ/mol O₂</strong>
         </div>
       </div>
 
       <div style={{ fontSize: 12, fontStyle: "italic", color: isReducibleByCarbon ? "#27ae60" : "#d35400", textAlign: "center", borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4, fontWeight: 600 }}>
         {isReducibleByCarbon
-          ? `âœ… Thermodynamically Feasible: Carbon/CO can reduce this oxide to pure metal at ${temp}Â°C.`
-          : `âŒ Extraction Blocked: Oxide layer is too stable. Requires a stronger reducing agent or electrolysis.`}
+          ? `✅ Thermodynamically Feasible: Carbon/CO can reduce this oxide to pure metal at ${temp}°C.`
+          : `❌ Extraction Blocked: Oxide layer is too stable. Requires a stronger reducing agent or electrolysis.`}
       </div>
     </div>
   );
 }
 
-// ðŸ—ºï¸ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 3 (TTT/CCT)
+// 🗺️ STANDALONE METALLURGICAL ENGINE: CAT 1 DIAGRAM 3 (TTT/CCT)
 function TttCctCalculations() {
   const [alloy, setAlloy] = useState("1045");
   const [coolingMedia, setCoolingMedia] = useState("Oil");
@@ -969,12 +969,12 @@ function TttCctCalculations() {
   let microstructures = { pearlite: 0, bainite: 0, martensite: 0 };
 
   if (coolingMedia === "Furnace") {
-    coolingRateText = "Very Slow Continuous Cooling (~0.1Â°C/s) - Follows CCT Equilibrium Paths";
+    coolingRateText = "Very Slow Continuous Cooling (~0.1°C/s) - Follows CCT Equilibrium Paths";
     microstructures = { pearlite: 100, bainite: 0, martensite: 0 };
     structureText = "100% Coarse Pearlite grains matrix. Uniformly soft, stress-relieved structural state.";
     finalHardnessText = alloy === "1045" ? "15 HRC (Soft)" : "22 HRC (Medium-Soft)";
   } else if (coolingMedia === "Oil") {
-    coolingRateText = "Moderate Industrial Quench (~25Â°C/s) - Crosses the Pearlite Nose Boundary";
+    coolingRateText = "Moderate Industrial Quench (~25°C/s) - Crosses the Pearlite Nose Boundary";
     if (alloy === "1045") {
       microstructures = { pearlite: 45, bainite: 15, martensite: 40 };
       structureText = "Mixed Microstructure: Fine Pearlite nodes + Acicular Bainite + Tempered Martensite shards.";
@@ -985,7 +985,7 @@ function TttCctCalculations() {
       finalHardnessText = "54 HRC (Hard)";
     }
   } else {
-    coolingRateText = "Severe Liquid Water Quench (~120Â°C/s) - Completely Bypasses the Transformation Nose";
+    coolingRateText = "Severe Liquid Water Quench (~120°C/s) - Completely Bypasses the Transformation Nose";
     microstructures = { pearlite: 0, bainite: 0, martensite: 100 };
     structureText = "100% Fully Untempered Body-Centered Tetragonal (BCT) Martensite structure. Maximum internal lattice strain.";
     finalHardnessText = alloy === "1045" ? "58 HRC (Very Hard / Brittle)" : "64 HRC (Maximum Brittle Hardness)";
@@ -993,7 +993,7 @@ function TttCctCalculations() {
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>ðŸ“Š TTT / CCT Transformation Diagram</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 TTT / CCT Transformation Diagram</div>
       <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Real nose-shaped transformation curves with your cooling path plotted on top.</div>
 
       <div style={{ marginBottom: "1.25rem", borderRadius: S.radiusMd, overflow: "hidden", border: `1px solid ${S.border}` }}>
@@ -1040,7 +1040,7 @@ function TttCctCalculations() {
 
       <div style={{ borderTop: `0.5px solid ${S.border}`, paddingTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ fontSize: 12, color: S.text2, maxWidth: "75%" }}>
-          ðŸ”¬ <strong>Phase Lattice Matrix:</strong> {structureText}
+          🔬 <strong>Phase Lattice Matrix:</strong> {structureText}
         </div>
         <div style={{ textAlign: "right" }}>
           <div style={{ fontSize: 10, fontWeight: 700, color: S.text3, textTransform: "uppercase" }}>Estimated Hardness</div>
@@ -1051,7 +1051,7 @@ function TttCctCalculations() {
   );
 }
 
-// ðŸŽ›ï¸ UPGRADED METALLURGICAL ENGINE: CAT 2 DIAGRAM 1 (STRESS-STRAIN SOLVER)
+// 🎛️ UPGRADED METALLURGICAL ENGINE: CAT 2 DIAGRAM 1 (STRESS-STRAIN SOLVER)
 function StressStrainCalculations() {
   const [solveMode, setSolveMode] = useState("extension");
   const [diameter, setDiameter] = useState(12.7);
@@ -1080,7 +1080,7 @@ function StressStrainCalculations() {
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>ðŸ“Š Engineering Stress-Strain Curve</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Engineering Stress-Strain Curve</div>
       <div style={{ fontSize: 12, color: S.text2, marginBottom: "1.25rem" }}>Real elastic + plastic curve shape for the active modulus. Marker tracks your calculated stress/strain point.</div>
 
       <div style={{ marginBottom: "1.25rem", borderRadius: S.radiusMd, overflow: "hidden", border: `1px solid ${S.border}` }}>
@@ -1130,7 +1130,7 @@ function StressStrainCalculations() {
         <div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, marginBottom: 2 }}>
             <span>Calculated Engineering Stress:</span>
-            <strong>{engineeringStress.toFixed(1)} MPa (N/mmÂ²)</strong>
+            <strong>{engineeringStress.toFixed(1)} MPa (N/mm²)</strong>
           </div>
           <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 99, overflow: "hidden" }}>
             <div style={{ width: `${Math.min(100, (engineeringStress / 800) * 100)}%`, height: "100%", background: S.steel }} />
@@ -1153,7 +1153,7 @@ function StressStrainCalculations() {
   );
 }
 
-// ðŸŽ›ï¸ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 2 (POURBAIX CALCULATOR)
+// 🎛️ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 2 (POURBAIX CALCULATOR)
 function PourbaixCalculations() {
   const [metal, setMetal] = useState("Fe");
   const [ph, setPh] = useState(7.0);
@@ -1166,65 +1166,65 @@ function PourbaixCalculations() {
 
   if (metal === "Fe") {
     if (potential < -0.6 - (0.059 * ph)) {
-      stabilityState = "Immunity (ðŸ‘‘ Safe)";
-      chemicalSpecies = "Pure Elemental Iron (Feâ° solid matrix)";
+      stabilityState = "Immunity (👑 Safe)";
+      chemicalSpecies = "Pure Elemental Iron (Fe⁰ solid matrix)";
       statusColor = "#27ae60";
-      badgeEmoji = "ðŸ‘‘";
+      badgeEmoji = "👑";
     } else if (ph < 4.0 || (ph >= 4.0 && ph < 9.0 && potential > 0.77)) {
-      stabilityState = "Active Corrosion (âš ï¸ High Risk)";
-      chemicalSpecies = "Soluble Aqueous Ions (FeÂ²âº / FeÂ³âº dissolution)";
+      stabilityState = "Active Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Soluble Aqueous Ions (Fe²⁺ / Fe³⁺ dissolution)";
       statusColor = "#c0392b";
-      badgeEmoji = "âš ï¸";
+      badgeEmoji = "⚠️";
     } else if (ph >= 4.0 && ph <= 12.0 && potential >= -0.6 && potential <= 0.77) {
-      stabilityState = "Passivation (ðŸ›¡ï¸ Protected Oxide)";
-      chemicalSpecies = "Adherent Protective Film (Feâ‚‚Oâ‚ƒ / Feâ‚ƒOâ‚„ Magnetite)";
+      stabilityState = "Passivation (🛡️ Protected Oxide)";
+      chemicalSpecies = "Adherent Protective Film (Fe₂O₃ / Fe₃O₄ Magnetite)";
       statusColor = "#2980b9";
-      badgeEmoji = "ðŸ›¡ï¸";
+      badgeEmoji = "🛡️";
     } else {
-      stabilityState = "Alkaline Corrosion (âš ï¸ High Risk)";
-      chemicalSpecies = "Soluble Ferrate Complex Ions (HFeOâ‚‚â» / FeOâ‚„Â²â»)";
+      stabilityState = "Alkaline Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Soluble Ferrate Complex Ions (HFeO₂⁻ / FeO₄²⁻)";
       statusColor = "#e67e22";
-      badgeEmoji = "âš ï¸";
+      badgeEmoji = "⚠️";
     }
   } else if (metal === "Cu") {
     if (potential < 0.34 - (0.059 * ph)) {
-      stabilityState = "Immunity (ðŸ‘‘ Safe)";
-      chemicalSpecies = "Pure Elemental Copper (Cuâ° solid matrix)";
+      stabilityState = "Immunity (👑 Safe)";
+      chemicalSpecies = "Pure Elemental Copper (Cu⁰ solid matrix)";
       statusColor = "#27ae60";
-      badgeEmoji = "ðŸ‘‘";
+      badgeEmoji = "👑";
     } else if (ph < 6.0 || ph > 13.0) {
-      stabilityState = "Active Acidic/Alkaline Corrosion (âš ï¸ High Risk)";
-      chemicalSpecies = "Soluble Copper Gilded Salts (CuÂ²âº / CuOâ‚‚Â²â»)";
+      stabilityState = "Active Acidic/Alkaline Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Soluble Copper Gilded Salts (Cu²⁺ / CuO₂²⁻)";
       statusColor = "#c0392b";
-      badgeEmoji = "âš ï¸";
+      badgeEmoji = "⚠️";
     } else {
-      stabilityState = "Passivation (ðŸ›¡ï¸ Protected Oxide)";
-      chemicalSpecies = "Cupric/Cuprous Passive Mineral Scale (Cuâ‚‚O / CuO)";
+      stabilityState = "Passivation (🛡️ Protected Oxide)";
+      chemicalSpecies = "Cupric/Cuprous Passive Mineral Scale (Cu₂O / CuO)";
       statusColor = "#2980b9";
-      badgeEmoji = "ðŸ›¡ï¸";
+      badgeEmoji = "🛡️";
     }
   } else {
     if (potential < -0.76) {
-      stabilityState = "Immunity (ðŸ‘‘ Safe)";
-      chemicalSpecies = "Pure Solid Zinc Coating (Znâ° sacrificial crystal)";
+      stabilityState = "Immunity (👑 Safe)";
+      chemicalSpecies = "Pure Solid Zinc Coating (Zn⁰ sacrificial crystal)";
       statusColor = "#27ae60";
-      badgeEmoji = "ðŸ‘‘";
+      badgeEmoji = "👑";
     } else if (ph >= 8.5 && ph <= 11.5) {
-      stabilityState = "Passivation (ðŸ›¡ï¸ Protected Zinc Scale)";
-      chemicalSpecies = "Zinc Hydroxide Passive Crust (Zn(OH)â‚‚ solid)";
+      stabilityState = "Passivation (🛡️ Protected Zinc Scale)";
+      chemicalSpecies = "Zinc Hydroxide Passive Crust (Zn(OH)₂ solid)";
       statusColor = "#2980b9";
-      badgeEmoji = "ðŸ›¡ï¸";
+      badgeEmoji = "🛡️";
     } else {
-      stabilityState = "Rapid Galvanic Corrosion (âš ï¸ High Risk)";
-      chemicalSpecies = "Highly Soluble Zincates (ZnÂ²âº / ZnOâ‚‚Â²â» weeping matrix)";
+      stabilityState = "Rapid Galvanic Corrosion (⚠️ High Risk)";
+      chemicalSpecies = "Highly Soluble Zincates (Zn²⁺ / ZnO₂²⁻ weeping matrix)";
       statusColor = "#c0392b";
-      badgeEmoji = "âš ï¸";
+      badgeEmoji = "⚠️";
     }
   }
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>ðŸ“Š Pourbaix (Potential-pH) Diagram</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Pourbaix (Potential-pH) Diagram</div>
       <div style={{ fontSize: 12, color: S.text2, marginBottom: "1rem" }}>Real stability region boundaries. Marker tracks your pH/potential point.</div>
 
       <div style={{ marginBottom: "1.25rem", borderRadius: S.radiusMd, overflow: "hidden", border: `1px solid ${S.border}` }}>
@@ -1285,7 +1285,7 @@ function PourbaixCalculations() {
   );
 }
 
-// ðŸŽ›ï¸ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 3 (JOMINY PROFILE)
+// 🎛️ STANDALONE METALLURGICAL ENGINE: CAT 2 DIAGRAM 3 (JOMINY PROFILE)
 function JominyCalculations() {
   const [alloy, setAlloy] = useState("4140");
   const [j1, setJ1] = useState(55);
@@ -1303,7 +1303,7 @@ function JominyCalculations() {
 
   return (
     <div style={{ background: "#ffffff", border: `1px solid ${S.border}`, borderRadius: S.radiusMd, padding: "1.25rem", marginTop: 10 }}>
-      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>ðŸ“Š Jominy End-Quench Hardenability Curve</div>
+      <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 2 }}>📊 Jominy End-Quench Hardenability Curve</div>
       <div style={{ fontSize: 12, color: S.text2, marginBottom: "1.25rem" }}>Real smooth curve through your 4 lab checkpoints. Adjust the number inputs to reshape the curve.</div>
 
       <div style={{ marginBottom: "1.25rem", borderRadius: S.radiusMd, overflow: "hidden", border: `1px solid ${S.border}` }}>
@@ -1344,12 +1344,12 @@ function JominyCalculations() {
 
       {(j1 > maxPotentialHRC || j16 < expectedTailHRC) && (
         <div style={{ background: "rgba(178,59,59,0.08)", border: "0.5px solid #b23b3b", color: "#b23b3b", padding: 8, borderRadius: 6, fontSize: 11, marginBottom: 10, fontWeight: 500 }}>
-          âš ï¸ <strong>Anomalous Lab Reading Detected:</strong> Data trends violate typical carbon martensitic transformation constraints for standard {alloy} chemistry bounds. Please verify physical indent dimensions.
+          ⚠️ <strong>Anomalous Lab Reading Detected:</strong> Data trends violate typical carbon martensitic transformation constraints for standard {alloy} chemistry bounds. Please verify physical indent dimensions.
         </div>
       )}
 
       <div style={{ fontSize: 12, fontStyle: "italic", color: S.steel, borderTop: `0.5px solid ${S.border}`, paddingTop: 8, marginTop: 4 }}>
-        ðŸ”¬ <strong>Depth Hardenability Assessment:</strong> {structuralAssessment}
+        🔬 <strong>Depth Hardenability Assessment:</strong> {structuralAssessment}
       </div>
     </div>
   );
@@ -1377,7 +1377,7 @@ function Dashboard({ plan, onBack }) {
     <div style={{ fontFamily: "system-ui, sans-serif", padding: "1rem 0", maxWidth: 700, margin: "0 auto" }}>
       {!localStorage.getItem("LOCAL_GROQ_KEY") && (
         <div style={{ background: S.goldLight, border: `1px solid ${S.goldMid}`, borderRadius: S.radiusMd, padding: 12, marginBottom: 15, display: "flex", gap: 10, alignItems: "center" }}>
-          <span style={{ fontSize: 12, color: S.text, fontWeight: 500 }}>ðŸ”‘ Input Groq Key to Activate AI Core:</span>
+          <span style={{ fontSize: 12, color: S.text, fontWeight: 500 }}>🔑 Input Groq Key to Activate AI Core:</span>
           <input type="password" value={tempKey} onChange={(e) => setTempKey(e.target.value)} placeholder="gsk_..." style={{ flex: 1, padding: "5px 10px", fontSize: 12, borderRadius: 4, border: `1px solid ${S.border2}` }} />
           <button onClick={saveLocalKey} style={{ background: S.steel, color: "#fff", border: "none", padding: "5px 12px", borderRadius: 4, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Save Key</button>
         </div>
@@ -1385,7 +1385,7 @@ function Dashboard({ plan, onBack }) {
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingBottom: "1rem", borderBottom: `0.5px solid ${S.border}`, marginBottom: "1.25rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: 9, background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>ðŸ”©</div>
+          <div style={{ width: 34, height: 34, borderRadius: 9, background: S.steel, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🔩</div>
           <div>
             <span style={{ fontSize: 16, fontWeight: 600, color: S.text }}>Metal</span>
             <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 999, background: tc.bg, color: tc.color }}>{planInfo.name}</span>
@@ -1401,9 +1401,9 @@ function Dashboard({ plan, onBack }) {
           { id: "consult", label: "Consultation" },
           { id: "brief", label: "Project brief" },
           { id: "eng", label: "Book engineer", locked: plan !== "max" },
-          { id: "lab", label: "ðŸ”¬ Metallurgical Lab" },
+          { id: "lab", label: "🔬 Metallurgical Lab" },
         ].map((t) => (
-          <button key={t.id} onClick={() => { localStorage.setItem("METAL_ACTIVE_TAB", t.id); setTab(t.id); }} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "ðŸ”’ "}{t.label}</button>
+          <button key={t.id} onClick={() => { localStorage.setItem("METAL_ACTIVE_TAB", t.id); setTab(t.id); }} style={{ flex: 1, padding: 9, borderRadius: S.radiusMd, border: `0.5px solid ${tab === t.id ? S.steel : S.border2}`, background: tab === t.id ? S.steel : S.bg, color: tab === t.id ? "#fff" : t.locked ? S.text3 : S.text2, fontSize: 13, fontWeight: 500, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>{t.locked && "🔒 "}{t.label}</button>
         ))}
       </div>
       <div style={{ display: tab === "consult" ? "block" : "none" }}><Chat /></div>
@@ -1414,16 +1414,16 @@ function Dashboard({ plan, onBack }) {
         <div style={card}>
           {!labCategory && (
             <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: S.steel, marginBottom: 4 }}>ðŸ”¬ Metallurgical Laboratory Suite</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: S.steel, marginBottom: 4 }}>🔬 Metallurgical Laboratory Suite</div>
               <div style={{ fontSize: 13, color: S.text2, marginBottom: "1.25rem" }}>Select an analytical module branch directory to explore core engineering diagrams.</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                 <div onClick={() => setLabCategory("constant")} style={{ border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, padding: 14, background: S.bg2, cursor: "pointer" }}>
-                  <div style={{ fontSize: 24, marginBottom: 6 }}>ðŸ›‘</div>
+                  <div style={{ fontSize: 24, marginBottom: 6 }}>🛑</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: S.text }}>Category 1</div>
                   <div style={{ fontSize: 12, color: S.text2, marginTop: 2, fontWeight: 500 }}>Constant Value reference maps. Fixed thermodynamic structural bounds.</div>
                 </div>
                 <div onClick={() => setLabCategory("input")} style={{ border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, padding: 14, background: S.bg2, cursor: "pointer" }}>
-                  <div style={{ fontSize: 24, marginBottom: 6 }}>ðŸŽ›ï¸</div>
+                  <div style={{ fontSize: 24, marginBottom: 6 }}>🎛️</div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: S.text }}>Category 2</div>
                   <div style={{ fontSize: 12, color: S.text2, marginTop: 2, fontWeight: 500 }}>Input Value graphs. Dynamic environmental lab calculators.</div>
                 </div>
@@ -1433,23 +1433,23 @@ function Dashboard({ plan, onBack }) {
           {labCategory && !selectedGraph && (
             <div>
               <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-                <button onClick={() => setLabCategory(null)} style={{ background: "none", border: "none", color: S.goldMid, fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>â† Back to Lab Suite</button>
+                <button onClick={() => setLabCategory(null)} style={{ background: "none", border: "none", color: S.goldMid, fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>← Back to Lab Suite</button>
               </div>
               <div style={{ fontSize: 15, fontWeight: 700, color: S.steel, marginBottom: 10 }}>
-                {labCategory === "constant" ? "ðŸ›‘ Category 1: Fixed Reference Maps Collection" : "ðŸŽ›ï¸ Category 2: Dynamic Lab Data Calculators Collection"}
+                {labCategory === "constant" ? "🛑 Category 1: Fixed Reference Maps Collection" : "🎛️ Category 2: Dynamic Lab Data Calculators Collection"}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 {labCategory === "constant" ? (
                   <>
-                    <button onClick={() => setSelectedGraph("iron-carbon")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>â€¢ The Iron-Carbon Phase Diagram</button>
-                    <button onClick={() => setSelectedGraph("ellingham")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>â€¢ Ellingham Oxidation Stability Diagrams</button>
-                    <button onClick={() => setSelectedGraph("ttt-cct")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>â€¢ TTT / CCT Transformation Curves</button>
+                    <button onClick={() => setSelectedGraph("iron-carbon")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• The Iron-Carbon Phase Diagram</button>
+                    <button onClick={() => setSelectedGraph("ellingham")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• Ellingham Oxidation Stability Diagrams</button>
+                    <button onClick={() => setSelectedGraph("ttt-cct")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• TTT / CCT Transformation Curves</button>
                   </>
                 ) : (
                   <>
-                    <button onClick={() => setSelectedGraph("stress-strain")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>â€¢ 1. Engineering Stress-Strain Curves (Tensile Testing)</button>
-                    <button onClick={() => setSelectedGraph("pourbaix")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>â€¢ 2. Pourbaix (Potential-pH) Corrosion Diagrams</button>
-                    <button onClick={() => setSelectedGraph("jominy")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>â€¢ 3. Jominy Hardenability Curves</button>
+                    <button onClick={() => setSelectedGraph("stress-strain")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• 1. Engineering Stress-Strain Curves (Tensile Testing)</button>
+                    <button onClick={() => setSelectedGraph("pourbaix")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• 2. Pourbaix (Potential-pH) Corrosion Diagrams</button>
+                    <button onClick={() => setSelectedGraph("jominy")} style={{ width: "100%", padding: 12, background: "#fff", border: `1px solid ${S.border2}`, borderRadius: S.radiusMd, cursor: "pointer", fontSize: 13, textAlign: "left", fontWeight: 600 }}>• 3. Jominy Hardenability Curves</button>
                   </>
                 )}
               </div>
@@ -1458,7 +1458,7 @@ function Dashboard({ plan, onBack }) {
           {selectedGraph && (
             <div>
               <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}>
-                <button onClick={() => setSelectedGraph(null)} style={{ background: "none", border: "none", color: S.goldMid, fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>â† Back to Collection</button>
+                <button onClick={() => setSelectedGraph(null)} style={{ background: "none", border: "none", color: S.goldMid, fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>← Back to Collection</button>
               </div>
               {selectedGraph === "iron-carbon" && <IronCarbonCalculations />}
               {selectedGraph === "ellingham" && <EllinghamCalculations />}
@@ -1474,7 +1474,7 @@ function Dashboard({ plan, onBack }) {
   );
 }
 
-// ðŸ”‘ PHASE 1 PRODUCTION ROUTER: INITIAL MARKETING SPLASH PAGE -> AUTH TERMINAL -> CORE WORKSPACE
+// 🔑 PHASE 1 PRODUCTION ROUTER: INITIAL MARKETING SPLASH PAGE -> AUTH TERMINAL -> CORE WORKSPACE
 export default function App() {
   const [userSession, setUserSession] = useState(() => {
     return localStorage.getItem("METAL_ACTIVE_USER") || null;
@@ -1536,7 +1536,7 @@ export default function App() {
             Get Started
           </button>
           <div style={{ fontSize: 10, color: "#64748b", marginTop: 18, fontWeight: 700, textTransform: "uppercase", letterSpacing: "1px" }}>
-            ðŸ”’ Secure Academic & Enterprise Layer
+            🔒 Secure Academic & Enterprise Layer
           </div>
         </div>
       </div>
@@ -1547,8 +1547,8 @@ export default function App() {
     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", background: "#f7f7f5", fontFamily: "system-ui, sans-serif", padding: "1rem" }}>
       <div style={{ background: "#ffffff", border: "1px solid rgba(0,0,0,0.1)", borderRadius: 12, padding: "2rem", maxWidth: 400, width: "100%", boxShadow: "0 4px 12px rgba(0,0,0,0.03)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-          <button onClick={() => setViewMode("splash")} style={{ background: "none", border: "none", color: S.text2, fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0 }}>â† Return</button>
-          <span style={{ fontSize: 20 }}>ðŸ”©</span>
+          <button onClick={() => setViewMode("splash")} style={{ background: "none", border: "none", color: S.text2, fontSize: 12, fontWeight: 600, cursor: "pointer", padding: 0 }}>← Return</button>
+          <span style={{ fontSize: 20 }}>🔩</span>
         </div>
         <div style={{ textAlign: "center", marginBottom: "1.5rem" }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: S.steel, margin: "0 0 4px 0" }}>
@@ -1569,7 +1569,7 @@ export default function App() {
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             <label style={{ fontSize: 11, fontWeight: 600, color: S.text2 }}>Secure Key Access Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" style={{ padding: "8px 12px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13 }} required />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" style={{ padding: "8px 12px", borderRadius: S.radiusMd, border: `1px solid ${S.border2}`, fontSize: 13 }} required />
           </div>
           <button type="submit" style={{ background: S.steel, color: "#ffffff", border: "none", padding: "10px", borderRadius: S.radiusMd, fontSize: 13, fontWeight: 600, cursor: "pointer", marginTop: 6 }}>
             {isSignUp ? "Generate Research Account" : "Initialize Secure Terminal Sign-In"}
